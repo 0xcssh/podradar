@@ -11,7 +11,17 @@ struct DeviceFinderView: View {
     @EnvironmentObject private var scanner: BLEScanner
     @State private var pulse = false
     @State private var hapticTimer: Timer?
-    private let feedback = UIImpactFeedbackGenerator(style: .light)
+    // Three separate generators, not one reused generator with a varying
+    // `intensity` parameter: a UIImpactFeedbackGenerator's `style` sets a
+    // hard ceiling on how strong `impactOccurred(intensity:)` can ever
+    // feel — a generator created with `.light` can NEVER hit as hard as
+    // `.heavy`, no matter what intensity value is passed. Field-reported
+    // 2026-07-17: pulses didn't feel stronger when getting closer. Fixed
+    // by switching generator STYLE per proximity bucket, not just the
+    // intensity multiplier within one fixed style.
+    private let lightFeedback = UIImpactFeedbackGenerator(style: .light)
+    private let mediumFeedback = UIImpactFeedbackGenerator(style: .medium)
+    private let heavyFeedback = UIImpactFeedbackGenerator(style: .heavy)
 
     private var device: BLEDevice? {
         scanner.registry.allDevices.first { $0.id == deviceID }
@@ -70,7 +80,9 @@ struct DeviceFinderView: View {
         .background(PRColor.background.ignoresSafeArea())
         .onAppear {
             pulse = true
-            feedback.prepare()
+            lightFeedback.prepare()
+            mediumFeedback.prepare()
+            heavyFeedback.prepare()
             scheduleHaptic()
         }
         .onDisappear {
@@ -104,15 +116,15 @@ struct DeviceFinderView: View {
         let proximity = reading?.proximity ?? 0
         let interval = HapticPulse.interval(forProximity: proximity)
         hapticTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
-            feedback.impactOccurred(intensity: hapticImpactIntensity(proximity))
+            generator(forProximity: proximity).impactOccurred(intensity: 1.0)
         }
     }
 
-    private func hapticImpactIntensity(_ proximity: Double) -> CGFloat {
+    private func generator(forProximity proximity: Double) -> UIImpactFeedbackGenerator {
         switch HapticPulse.intensity(forProximity: proximity) {
-        case .light: return 0.4
-        case .medium: return 0.7
-        case .heavy: return 1.0
+        case .light: return lightFeedback
+        case .medium: return mediumFeedback
+        case .heavy: return heavyFeedback
         }
     }
 }
