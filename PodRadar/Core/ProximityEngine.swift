@@ -7,12 +7,17 @@ import Foundation
 /// raw RSSI in, this only does math. Keep it that way so device iteration
 /// (~15 min per build) is reserved for things that can't be unit-tested.
 struct ProximityEngine {
-    /// Typical RSSI at 0 distance for BLE beacons/headphones. Devices vary
-    /// (~-40 to -55), but a fixed reference keeps the score comparable
-    /// across sessions; field-tune once real hardware data comes in.
-    static let referenceRSSIAtOneMeter: Double = -50
-    /// Path-loss exponent for free space / indoor mixed environment.
-    static let pathLossExponent: Double = 2.5
+    /// RSSI treated as "as far as useful" (0%). Below the noise floor is
+    /// discarded entirely, not just scored 0.
+    static let farRSSI: Double = -90
+    /// RSSI treated as "point-blank" (100%). Field-tuned 2026-07-17: the
+    /// previous model (a path-loss formula that plateaued at -50dBm) made
+    /// the LAST stretch of a real approach invisible — proximity looked
+    /// stuck around 75-90% and then "jumped" to 100% once the smoothed
+    /// value finally crossed the plateau threshold, instead of climbing
+    /// continuously. A simple, wide, continuous ramp all the way down to
+    /// near-touching RSSI removes that dead zone.
+    static let closeRSSI: Double = -35
     /// Below this RSSI a reading is discarded as noise/out-of-range rather
     /// than fed into the filter.
     static let noiseFloorRSSI: Double = -100
@@ -24,17 +29,22 @@ struct ProximityEngine {
     /// perception tolerates a snappy "getting warmer" far more than it
     /// tolerates flicker on "getting colder", so the two directions don't
     /// need matching time constants.
-    var attackSmoothing: Double = 0.5
+    var attackSmoothing: Double = 0.6
     var releaseSmoothing: Double = 0.25
 
     /// How many recent raw samples the median pre-filter looks at. Real BLE
-    /// RSSI swings ±5-10 dB sample-to-sample even with both devices
+    /// RSSI swings a few dB sample-to-sample even with both devices
     /// stationary (multipath, channel hopping) — field-reported 2026-07-17
-    /// as "jumps around a lot" once the attack factor above stopped
-    /// damping it. A median-of-3 kills single-sample spikes (in EITHER
-    /// direction) before they ever reach the EMA, without adding the
-    /// directional lag a slower attack factor would.
+    /// as "jumps around a lot" before this existed. A median-of-3 kills
+    /// single-sample spikes before they ever reach the EMA.
     private static let medianWindow = 3
+    /// A single-sample deviation at or above this is treated as genuine
+    /// movement, not noise, and bypasses the median gate entirely — field-
+    /// reported 2026-07-17 (2nd round): the median's mandatory "2 matching
+    /// samples to accept a change" made a real fast approach feel like
+    /// "huge latency". Ordinary multipath jitter rarely swings this far in
+    /// one sample; a real step toward/away from the device easily does.
+    private static let largeJumpThreshold: Double = 15
 
     private var recentRawRSSI: [Double] = []
     private(set) var smoothedRSSI: Double?
@@ -50,7 +60,14 @@ struct ProximityEngine {
         if recentRawRSSI.count > Self.medianWindow {
             recentRawRSSI.removeFirst(recentRawRSSI.count - Self.medianWindow)
         }
-        let filteredRSSI = recentRawRSSI.sorted()[recentRawRSSI.count / 2]
+        let medianRSSI = recentRawRSSI.sorted()[recentRawRSSI.count / 2]
+
+        let filteredRSSI: Double
+        if let previous = smoothedRSSI, abs(rssi - previous) >= Self.largeJumpThreshold {
+            filteredRSSI = rssi
+        } else {
+            filteredRSSI = medianRSSI
+        }
 
         if let previous = smoothedRSSI {
             // Higher (less negative) RSSI == closer == attack; lower == release.
@@ -68,16 +85,15 @@ struct ProximityEngine {
         return ProximityReading(proximity: proximity, trend: trend, smoothedRSSI: smoothed)
     }
 
-    /// Maps a (smoothed) RSSI value to a 0...1 proximity score using a
-    /// standard log-distance path-loss model, clamped to [0, 1].
+    /// Maps a (smoothed) RSSI value to a 0...1 proximity score: a smooth
+    /// continuous ramp between `farRSSI` (0%) and `closeRSSI` (100%), with
+    /// no plateau in between — see `closeRSSI` doc for why that matters.
     static func proximityScore(forRSSI rssi: Double) -> Double {
-        // distance_ratio = 10 ^ ((referenceRSSI - rssi) / (10 * n))
-        let exponent = (referenceRSSIAtOneMeter - rssi) / (10 * pathLossExponent)
-        let distanceRatio = pow(10, exponent)
-        // distanceRatio == 1 at the reference point (defined as "very close" -> proximity 1).
-        // Larger ratio = farther away -> lower score. Map with a soft inverse curve.
-        let score = 1 / (1 + max(0, distanceRatio - 1))
-        return min(1, max(0, score))
+        let t = (rssi - farRSSI) / (closeRSSI - farRSSI)
+        let clamped = min(1, max(0, t))
+        // Smoothstep: gentler acceleration at both ends than a straight
+        // line, without reintroducing a flat plateau anywhere.
+        return clamped * clamped * (3 - 2 * clamped)
     }
 
     /// Compares two proximity scores and classifies the movement direction.

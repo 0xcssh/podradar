@@ -34,20 +34,17 @@ final class ProximityEngineTests: XCTestCase {
     }
 
     func testAttackIsFasterThanRelease() {
-        // Same magnitude step in both directions, sustained for 2 samples
-        // so the median pre-filter lets it through (a single-sample step
-        // is noise-rejected by design — see testMedianPreFilterRejects…).
+        // Same magnitude single-sample jump in both directions — big
+        // enough to bypass the median gate (see testLargeJumpBypasses…).
         // Attack (getting closer) should close more of the gap than
         // release (getting farther) — the fix for the field-reported
         // "laggy at 100%" approach feel (2026-07-17).
         var approaching = ProximityEngine()
         for _ in 0..<5 { approaching.ingest(rssi: -70) }
-        approaching.ingest(rssi: -50)
         let afterApproach = approaching.ingest(rssi: -50)!.smoothedRSSI
 
         var receding = ProximityEngine()
         for _ in 0..<5 { receding.ingest(rssi: -50) }
-        receding.ingest(rssi: -70)
         let afterRecede = receding.ingest(rssi: -70)!.smoothedRSSI
 
         let approachGapClosed = abs(afterApproach - (-70))
@@ -55,28 +52,42 @@ final class ProximityEngineTests: XCTestCase {
         XCTAssertGreaterThan(approachGapClosed, recedeGapClosed)
     }
 
-    func testMedianPreFilterRejectsASingleNoiseSpike() {
-        // A stationary device produces RSSI that wobbles sample-to-sample;
-        // one outlier spike (real-world multipath/channel-hop noise)
+    func testMedianPreFilterRejectsASingleSmallNoiseSpike() {
+        // A stationary device produces RSSI that wobbles a few dB
+        // sample-to-sample; one small outlier (real-world multipath/
+        // channel-hop noise, below the large-jump bypass threshold)
         // should barely move the reading, not jump the percentage.
         var engine = ProximityEngine()
         for _ in 0..<5 { engine.ingest(rssi: -70) }
         let baseline = engine.smoothedRSSI!
 
-        let spiked = engine.ingest(rssi: -40)! // single outlier
-        // Median-of-3 of [-70, -70, -40] is -70, so the spike alone
+        let spiked = engine.ingest(rssi: -60)! // 10 dB outlier, below the 15 dB bypass threshold
+        // Median-of-3 of [-70, -70, -60] is -70, so the spike alone
         // shouldn't move the filtered input at all.
         XCTAssertEqual(spiked.smoothedRSSI, baseline, accuracy: 0.01)
     }
 
-    func testMedianPreFilterAcceptsASustainedChange() {
-        // Two consecutive samples at the new level should flip the median
-        // and let the EMA start tracking it — a real move, not noise.
+    func testMedianPreFilterAcceptsASustainedSmallChange() {
+        // Two consecutive samples at the new (sub-threshold) level should
+        // flip the median and let the EMA start tracking it — a real
+        // move, not noise.
         var engine = ProximityEngine()
         for _ in 0..<5 { engine.ingest(rssi: -70) }
-        engine.ingest(rssi: -40)
-        let afterTwo = engine.ingest(rssi: -40)!
+        engine.ingest(rssi: -60)
+        let afterTwo = engine.ingest(rssi: -60)!
         XCTAssertGreaterThan(afterTwo.smoothedRSSI, -70)
+    }
+
+    func testLargeJumpBypassesMedianForFastResponse() {
+        // Field-reported 2026-07-17 (2nd round): requiring 2 matching
+        // samples before accepting ANY change made a real fast approach
+        // feel like "huge latency". A single big jump (>= 15 dB, far
+        // beyond ordinary multipath jitter) should move the reading
+        // immediately, not wait for a second confirming sample.
+        var engine = ProximityEngine()
+        for _ in 0..<5 { engine.ingest(rssi: -80) }
+        let afterOneSample = engine.ingest(rssi: -40)!.smoothedRSSI
+        XCTAssertGreaterThan(afterOneSample, -80)
     }
 
     func testRepeatedCloseSamplesConvergeToNearMaxQuickly() {
@@ -100,6 +111,18 @@ final class ProximityEngineTests: XCTestCase {
         let far = ProximityEngine.proximityScore(forRSSI: -95)
         XCTAssertGreaterThan(near, mid)
         XCTAssertGreaterThan(mid, far)
+    }
+
+    func testProximityScoreHasNoPlateauNearMax() {
+        // Field-reported 2026-07-17: the old path-loss formula plateaued
+        // at -50dBm, so the last stretch of a real approach looked stuck
+        // around 75-90% and then "jumped" to 100% instead of climbing
+        // continuously. Every dB closer in the close range must still
+        // move the score — no two points in this range can tie.
+        let scores = stride(from: -55.0, through: -35.0, by: 5.0).map(ProximityEngine.proximityScore(forRSSI:))
+        for i in 1..<scores.count {
+            XCTAssertGreaterThan(scores[i], scores[i - 1], "expected strictly increasing scores near max")
+        }
     }
 
     func testProximityScoreClampedToUnitRange() {

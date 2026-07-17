@@ -70,6 +70,24 @@ RadarView (with an Open Settings button for the unauthorized case) — it
 used to fall through to the same silent "Scanning…" text as the normal
 not-found-yet-state, giving zero signal that anything was actually wrong.
 
+**Curve + latency lesson (2026-07-17, 4th field test):** "75% → 100% with
+huge latency, not progressive." Two compounding causes, both fixed:
+1. `proximityScore` used a path-loss formula that PLATEAUED at -50dBm —
+   any RSSI at or beyond that threshold scored exactly 1.0, so the last
+   stretch of a real approach had no headroom to climb through; it looked
+   stuck then "jumped" once the smoothed value finally crossed -50dBm.
+   Replaced with a plain continuous ramp (smoothstep) between `farRSSI`
+   (-90, 0%) and `closeRSSI` (-35, 100%) — no plateau anywhere in
+   between. Pinned by `testProximityScoreHasNoPlateauNearMax`.
+2. The median-of-3 pre-filter (added to fix stationary jitter) required 2
+   matching samples before accepting ANY change, including a real fast
+   approach — that's what felt like "huge latency". Added a bypass: a
+   single-sample deviation ≥15dB (far beyond ordinary multipath jitter,
+   which the earlier fix targeted) skips the median gate and goes
+   straight to the EMA, so genuine movement registers in 1 sample while
+   small stationary noise still gets filtered. `attackSmoothing` also
+   bumped 0.5→0.6. Pinned by `testLargeJumpBypassesMedianForFastResponse`.
+
 Second field lesson (same day, next test): the fast attack factor let raw
 RSSI noise pass through almost unfiltered, so the reading "jumped around
 a lot" with the phone held perfectly still — real BLE RSSI wobbles ±5-10
