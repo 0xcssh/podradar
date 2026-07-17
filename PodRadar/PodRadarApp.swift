@@ -16,7 +16,7 @@ struct PodRadarApp: App {
                 .task {
                     scanner.onDeviceWentStale = { device in
                         guard let location = locationRecorder.currentLocationSnapshot() else { return }
-                        scanner.registry.attachLastKnownLocation(location, toDeviceID: device.id)
+                        scanner.attachLastKnownLocation(location, toDeviceID: device.id)
                     }
                     await subscriptionManager.loadProducts()
                     await subscriptionManager.refreshEntitlements()

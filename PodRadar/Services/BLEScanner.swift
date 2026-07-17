@@ -30,6 +30,10 @@ final class BLEScanner: NSObject, ObservableObject {
         central = CBCentralManager(delegate: self, queue: nil)
     }
 
+    func attachLastKnownLocation(_ location: LastKnownLocation, toDeviceID id: String) {
+        registry.attachLastKnownLocation(location, toDeviceID: id)
+    }
+
     func startScanning() {
         guard central.state == .poweredOn else { return }
         // duplicates key: without allowDuplicates the OS coalesces
