@@ -34,21 +34,49 @@ final class ProximityEngineTests: XCTestCase {
     }
 
     func testAttackIsFasterThanRelease() {
-        // Same magnitude step in both directions; attack (getting closer)
-        // should close more of the gap in one sample than release (getting
-        // farther) — this is the fix for the field-reported "laggy at 100%"
-        // approach feel (2026-07-17).
+        // Same magnitude step in both directions, sustained for 2 samples
+        // so the median pre-filter lets it through (a single-sample step
+        // is noise-rejected by design — see testMedianPreFilterRejects…).
+        // Attack (getting closer) should close more of the gap than
+        // release (getting farther) — the fix for the field-reported
+        // "laggy at 100%" approach feel (2026-07-17).
         var approaching = ProximityEngine()
         for _ in 0..<5 { approaching.ingest(rssi: -70) }
+        approaching.ingest(rssi: -50)
         let afterApproach = approaching.ingest(rssi: -50)!.smoothedRSSI
 
         var receding = ProximityEngine()
         for _ in 0..<5 { receding.ingest(rssi: -50) }
+        receding.ingest(rssi: -70)
         let afterRecede = receding.ingest(rssi: -70)!.smoothedRSSI
 
-        let approachGapClosed = afterApproach - (-70)
-        let recedeGapClosed = (-70) - afterRecede
+        let approachGapClosed = abs(afterApproach - (-70))
+        let recedeGapClosed = abs(afterRecede - (-50))
         XCTAssertGreaterThan(approachGapClosed, recedeGapClosed)
+    }
+
+    func testMedianPreFilterRejectsASingleNoiseSpike() {
+        // A stationary device produces RSSI that wobbles sample-to-sample;
+        // one outlier spike (real-world multipath/channel-hop noise)
+        // should barely move the reading, not jump the percentage.
+        var engine = ProximityEngine()
+        for _ in 0..<5 { engine.ingest(rssi: -70) }
+        let baseline = engine.smoothedRSSI!
+
+        let spiked = engine.ingest(rssi: -40)! // single outlier
+        // Median-of-3 of [-70, -70, -40] is -70, so the spike alone
+        // shouldn't move the filtered input at all.
+        XCTAssertEqual(spiked.smoothedRSSI, baseline, accuracy: 0.01)
+    }
+
+    func testMedianPreFilterAcceptsASustainedChange() {
+        // Two consecutive samples at the new level should flip the median
+        // and let the EMA start tracking it — a real move, not noise.
+        var engine = ProximityEngine()
+        for _ in 0..<5 { engine.ingest(rssi: -70) }
+        engine.ingest(rssi: -40)
+        let afterTwo = engine.ingest(rssi: -40)!
+        XCTAssertGreaterThan(afterTwo.smoothedRSSI, -70)
     }
 
     func testRepeatedCloseSamplesConvergeToNearMaxQuickly() {

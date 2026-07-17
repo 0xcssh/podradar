@@ -24,9 +24,19 @@ struct ProximityEngine {
     /// perception tolerates a snappy "getting warmer" far more than it
     /// tolerates flicker on "getting colder", so the two directions don't
     /// need matching time constants.
-    var attackSmoothing: Double = 0.6
+    var attackSmoothing: Double = 0.5
     var releaseSmoothing: Double = 0.25
 
+    /// How many recent raw samples the median pre-filter looks at. Real BLE
+    /// RSSI swings ±5-10 dB sample-to-sample even with both devices
+    /// stationary (multipath, channel hopping) — field-reported 2026-07-17
+    /// as "jumps around a lot" once the attack factor above stopped
+    /// damping it. A median-of-3 kills single-sample spikes (in EITHER
+    /// direction) before they ever reach the EMA, without adding the
+    /// directional lag a slower attack factor would.
+    private static let medianWindow = 3
+
+    private var recentRawRSSI: [Double] = []
     private(set) var smoothedRSSI: Double?
     private(set) var previousProximity: Double?
 
@@ -36,12 +46,18 @@ struct ProximityEngine {
     mutating func ingest(rssi: Double) -> ProximityReading? {
         guard rssi >= Self.noiseFloorRSSI else { return nil }
 
+        recentRawRSSI.append(rssi)
+        if recentRawRSSI.count > Self.medianWindow {
+            recentRawRSSI.removeFirst(recentRawRSSI.count - Self.medianWindow)
+        }
+        let filteredRSSI = recentRawRSSI.sorted()[recentRawRSSI.count / 2]
+
         if let previous = smoothedRSSI {
             // Higher (less negative) RSSI == closer == attack; lower == release.
-            let factor = rssi > previous ? attackSmoothing : releaseSmoothing
-            smoothedRSSI = previous + factor * (rssi - previous)
+            let factor = filteredRSSI > previous ? attackSmoothing : releaseSmoothing
+            smoothedRSSI = previous + factor * (filteredRSSI - previous)
         } else {
-            smoothedRSSI = rssi
+            smoothedRSSI = filteredRSSI
         }
         guard let smoothed = smoothedRSSI else { return nil }
 

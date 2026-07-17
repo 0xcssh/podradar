@@ -39,8 +39,17 @@ Fixed with **asymmetric attack/release** — fast when a sample says
 (`releaseSmoothing: 0.25`) — human perception tolerates a snappy
 "getting warmer" far more than flicker on "getting colder", so the two
 directions don't need matching time constants. Pinned by
-`ProximityEngineTests.testAttackIsFasterThanRelease`. Pending re-test on
-device.
+`ProximityEngineTests.testAttackIsFasterThanRelease`.
+
+Second field lesson (same day, next test): the fast attack factor let raw
+RSSI noise pass through almost unfiltered, so the reading "jumped around
+a lot" with the phone held perfectly still — real BLE RSSI wobbles ±5-10
+dB sample-to-sample even stationary (multipath, 3-channel advertising
+hop), that's not a bug. Added a **median-of-3 pre-filter** in front of
+the EMA: single-sample outliers (either direction) get rejected outright,
+a change needs 2 consecutive samples to register. Pinned by
+`testMedianPreFilterRejectsASingleNoiseSpike` /
+`…AcceptsASustainedChange`. Pending re-test on device (2nd iteration).
 Keep the actual signal math in `Core/ProximityEngine.swift` (pure, tested)
 and treat `Services/BLEScanner.swift` as a thin, boring wrapper so there's
 as little untestable surface as possible.
