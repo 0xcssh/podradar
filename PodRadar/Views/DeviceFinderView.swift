@@ -90,7 +90,8 @@ struct DeviceFinderView: View {
         switch reading?.trend {
         case .warmer: return "Getting warmer"
         case .colder: return "Getting colder"
-        case .steady, .none: return "Searching…"
+        case .steady: return "Steady"
+        case .none: return "Searching…"
         }
     }
 

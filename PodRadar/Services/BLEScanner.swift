@@ -27,6 +27,14 @@ final class BLEScanner: NSObject, ObservableObject {
     private var engines: [String: ProximityEngine] = [:]
     private var notifiedStaleIDs: Set<String> = []
     private var staleCheckTimer: Timer?
+    /// True between `startScanning()` and `stopScanning()`. A fresh
+    /// `CBCentralManager` starts in `.unknown` state and only reaches
+    /// `.poweredOn` asynchronously a moment later — calling
+    /// `startScanning()` before then used to silently no-op FOREVER
+    /// (field-reported 2026-07-17: scan stuck on the empty state, never
+    /// recovering). This flag lets `centralManagerDidUpdateState` retry
+    /// automatically the moment the radio is actually ready.
+    private var wantsToScan = false
 
     override init() {
         super.init()
@@ -56,7 +64,21 @@ final class BLEScanner: NSObject, ObservableObject {
     }
 
     func startScanning() {
-        guard central.state == .poweredOn else { return }
+        wantsToScan = true
+        guard central.state == .poweredOn, !isScanning else { return }
+        beginScan()
+    }
+
+    func stopScanning() {
+        wantsToScan = false
+        guard isScanning else { return }
+        central.stopScan()
+        isScanning = false
+        staleCheckTimer?.invalidate()
+        staleCheckTimer = nil
+    }
+
+    private func beginScan() {
         // duplicates key: without allowDuplicates the OS coalesces
         // advertisements, which starves the radar of fresh RSSI samples.
         central.scanForPeripherals(
@@ -67,13 +89,6 @@ final class BLEScanner: NSObject, ObservableObject {
         staleCheckTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
             Task { @MainActor in self?.pruneStaleDevices() }
         }
-    }
-
-    func stopScanning() {
-        central.stopScan()
-        isScanning = false
-        staleCheckTimer?.invalidate()
-        staleCheckTimer = nil
     }
 
     private func pruneStaleDevices() {
@@ -90,8 +105,8 @@ extension BLEScanner: CBCentralManagerDelegate {
     nonisolated func centralManagerDidUpdateState(_ central: CBCentralManager) {
         Task { @MainActor in
             self.bluetoothState = central.state
-            if central.state == .poweredOn, self.isScanning == false {
-                // no-op: caller decides when to start
+            if central.state == .poweredOn, self.wantsToScan, !self.isScanning {
+                self.beginScan()
             }
         }
     }

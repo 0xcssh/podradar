@@ -41,6 +41,35 @@ Fixed with **asymmetric attack/release** — fast when a sample says
 directions don't need matching time constants. Pinned by
 `ProximityEngineTests.testAttackIsFasterThanRelease`.
 
+**Critical lifecycle bug (2026-07-17, 3rd field test):** scanning silently
+died in two ways, both now fixed:
+1. `BLEScanner.startScanning()` used to no-op if `central.state` wasn't
+   already `.poweredOn` — but a fresh `CBCentralManager` starts in
+   `.unknown` and only reaches `.poweredOn` asynchronously a moment later.
+   Calling `startScanning()` from a view's `.onAppear` (which fires
+   immediately) could lose the race and scanning would just never start,
+   with zero UI indication (the "Scanning for nearby devices…" empty
+   state looks identical whether it's about to find something or dead
+   forever). Fixed with a `wantsToScan` flag: `centralManagerDidUpdateState`
+   now retries `beginScan()` itself once the radio is actually ready.
+2. `RadarView` used to call `scanner.stopScanning()` from `.onDisappear`.
+   Pushing `DeviceFinderView` via `NavigationLink` fires `.onDisappear` on
+   the screen underneath it (SwiftUI/NavigationStack behavior) — so
+   opening the exact screen that needs LIVE proximity updates the most
+   was killing the scan, freezing the reading at whatever it was the
+   instant you tapped in (field-reported: percentage frozen at 63% for
+   the entire time on DeviceFinderView, haptics imperceptible because
+   they kept firing at that one stale interval forever). Fixed by moving
+   the scan lifecycle to `RootView` (start once, tied to
+   `scenePhase`/foreground-background, not to any individual tab/screen)
+   — BLE scanning is cheap enough to just run for the whole foreground
+   session.
+
+Also added a real "Bluetooth is off/unauthorized/unsupported" UI state in
+RadarView (with an Open Settings button for the unauthorized case) — it
+used to fall through to the same silent "Scanning…" text as the normal
+not-found-yet-state, giving zero signal that anything was actually wrong.
+
 Second field lesson (same day, next test): the fast attack factor let raw
 RSSI noise pass through almost unfiltered, so the reading "jumped around
 a lot" with the phone held perfectly still — real BLE RSSI wobbles ±5-10

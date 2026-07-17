@@ -1,4 +1,6 @@
+import CoreBluetooth
 import SwiftUI
+import UIKit
 
 struct RadarView: View {
     @EnvironmentObject private var scanner: BLEScanner
@@ -6,7 +8,9 @@ struct RadarView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if scanner.registry.inRangeDevices(asOf: .now).isEmpty {
+                if let message = bluetoothProblemMessage {
+                    bluetoothProblemState(message)
+                } else if scanner.registry.inRangeDevices(asOf: .now).isEmpty {
                     emptyState
                 } else {
                     List {
@@ -44,9 +48,45 @@ struct RadarView: View {
             .background(PRColor.background.ignoresSafeArea())
             .navigationTitle("PodRadar")
             .toolbarBackground(PRColor.background, for: .navigationBar)
-            .onAppear { scanner.startScanning() }
-            .onDisappear { scanner.stopScanning() }
         }
+    }
+
+    /// nil when Bluetooth is usable (poweredOn) or we don't know yet
+    /// (`.unknown`/`.resetting` — CBCentralManager settles quickly after
+    /// launch, no need to alarm the user over that transient state).
+    private var bluetoothProblemMessage: String? {
+        switch scanner.bluetoothState {
+        case .poweredOff: return "Turn on Bluetooth to start scanning for devices."
+        case .unauthorized: return "PodRadar needs Bluetooth access. Enable it in Settings."
+        case .unsupported: return "This device doesn't support Bluetooth Low Energy."
+        case .poweredOn, .unknown, .resetting: return nil
+        @unknown default: return nil
+        }
+    }
+
+    private func bluetoothProblemState(_ message: String) -> some View {
+        VStack(spacing: 16) {
+            Image(systemName: "bolt.slash")
+                .font(.system(size: 48))
+                .foregroundStyle(.white.opacity(0.6))
+            Text(message)
+                .font(.headline)
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+            if scanner.bluetoothState == .unauthorized {
+                Button("Open Settings") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                .prPrimaryPill()
+                .padding(.horizontal, 60)
+            }
+        }
+        .padding(.top, 80)
+        .frame(maxWidth: .infinity)
+        .background(PRColor.background.ignoresSafeArea())
     }
 
     private var emptyState: some View {
