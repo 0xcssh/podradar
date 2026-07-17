@@ -10,8 +10,14 @@ a differentiating last-known-position map.
 1. User opens the app because they just lost an earbud/headphone.
 2. Radar tab scans all nearby BLE peripherals, shows a live list sorted by
    proximity (closest first), with a hot/cold trend per device.
-3. Tapping a device shows a full-screen proximity view (percentage +
-   hot/cold + optional sound/vibration cue as the user gets closer).
+3. Tapping a device opens `DeviceFinderView`: a full-screen pulsing radar
+   visual, live percentage, and haptic pulses that speed up/intensify
+   with proximity (`Core/HapticPulse`, CI-tested) — shipped 2026-07-17.
+   This is what makes an "Unknown device" sighting still useful: most BLE
+   peripherals never broadcast a name in their advertisement (only Apple's
+   proximity-pairing beacon is reliably identifiable, field-confirmed the
+   same day), so the user doesn't need to know WHAT a signal is, just
+   whether walking toward it makes the pulses faster.
 4. If a device goes stale (not heard from in ~8s) while the app has
    location permission, PodRadar stamps its last-known GPS position —
    visible later on the Map tab. This is the answer to the niche's #1

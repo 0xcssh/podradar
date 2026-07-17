@@ -11,7 +11,11 @@ struct RadarView: View {
                 } else {
                     List {
                         ForEach(scanner.registry.inRangeDevices(asOf: .now)) { device in
-                            DeviceRow(device: device, reading: scanner.proximityByDeviceID[device.id])
+                            NavigationLink {
+                                DeviceFinderView(deviceID: device.id)
+                            } label: {
+                                DeviceRow(device: device, reading: scanner.proximityByDeviceID[device.id])
+                            }
                                 .listRowBackground(Color.clear)
                                 .listRowSeparator(.hidden)
                                 .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
