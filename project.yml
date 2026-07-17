@@ -1,0 +1,65 @@
+name: PodRadar
+options:
+  bundleIdPrefix: com.awdia
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    CODE_SIGN_STYLE: Automatic
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 1.0
+
+targets:
+  PodRadar:
+    type: application
+    platform: iOS
+    sources:
+      - PodRadar
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.awdia.podradar
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: PodRadar/Info.plist
+      properties:
+        CFBundleDisplayName: PodRadar
+        UILaunchScreen: {}
+        ITSAppUsesNonExemptEncryption: false
+        NSBluetoothAlwaysUsageDescription: "PodRadar scans nearby Bluetooth signals to help you locate your lost headphones."
+        NSLocationWhenInUseUsageDescription: "PodRadar remembers where your headphones were last detected so you can find them on a map."
+        # iPhone-only portrait app: opting out of iPad multitasking satisfies
+        # App Store validation without declaring all four orientations.
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    entitlements:
+      path: PodRadar/PodRadar.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.podradar.app
+
+  PodRadarTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - PodRadarTests
+    settings:
+      base:
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/PodRadar.app/PodRadar
+        BUNDLE_LOADER: $(TEST_HOST)
+    dependencies:
+      - target: PodRadar
+
+schemes:
+  PodRadar:
+    build:
+      targets:
+        PodRadar: all
+    test:
+      targets:
+        - PodRadarTests
