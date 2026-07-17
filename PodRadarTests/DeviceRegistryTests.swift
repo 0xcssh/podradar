@@ -76,4 +76,44 @@ final class DeviceRegistryTests: XCTestCase {
         registry.toggleFavorite(id: "A")
         XCTAssertFalse(registry.allDevices.first!.isFavorite)
     }
+
+    func testIgnoredDeviceExcludedFromInRangeButNotFromAllDevices() {
+        var registry = DeviceRegistry()
+        let now = Date()
+        registry.recordSighting(id: "A", name: "Neighbor's Speaker", rssi: -50, at: now)
+        registry.ignore(id: "A")
+
+        XCTAssertTrue(registry.inRangeDevices(asOf: now).isEmpty)
+        XCTAssertEqual(registry.allDevices.map(\.id), ["A"])
+    }
+
+    func testUnignoreRestoresDeviceToInRangeList() {
+        var registry = DeviceRegistry()
+        let now = Date()
+        registry.recordSighting(id: "A", name: "AirPods", rssi: -50, at: now)
+        registry.ignore(id: "A")
+        registry.unignore(id: "A")
+
+        XCTAssertEqual(registry.inRangeDevices(asOf: now).map(\.id), ["A"])
+    }
+
+    func testSetIgnoredDeviceIDsRestoresPersistedState() {
+        var registry = DeviceRegistry()
+        registry.recordSighting(id: "A", name: "AirPods", rssi: -50, at: .now)
+        registry.setIgnoredDeviceIDs(["A", "B"])
+
+        XCTAssertTrue(registry.inRangeDevices(asOf: .now).isEmpty)
+    }
+
+    func testUpsertUpgradesUnknownKindButNeverDowngrades() {
+        var registry = DeviceRegistry()
+        registry.recordSighting(id: "A", name: "", kind: .unknown, rssi: -50, at: .now)
+        registry.recordSighting(id: "A", name: "AirPods", kind: .earbuds, rssi: -48, at: .now)
+        XCTAssertEqual(registry.allDevices.first?.kind, .earbuds)
+
+        // A later ambiguous read (e.g. name dropped from the advertisement)
+        // must not downgrade the classification back to .unknown.
+        registry.recordSighting(id: "A", name: "", kind: .unknown, rssi: -49, at: .now)
+        XCTAssertEqual(registry.allDevices.first?.kind, .earbuds)
+    }
 }

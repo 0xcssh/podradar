@@ -19,6 +19,9 @@ final class BLEScanner: NSObject, ObservableObject {
     /// location layer can stamp a last-known-position. Set by the owner
     /// (e.g. AppState) at startup.
     var onDeviceWentStale: ((BLEDevice) -> Void)?
+    /// Fired whenever the ignore list changes, so the owner can persist it
+    /// (DeviceStore) — the registry itself has no storage dependency.
+    var onIgnoredDeviceIDsChanged: ((Set<String>) -> Void)?
 
     private var central: CBCentralManager!
     private var engines: [String: ProximityEngine] = [:]
@@ -32,6 +35,24 @@ final class BLEScanner: NSObject, ObservableObject {
 
     func attachLastKnownLocation(_ location: LastKnownLocation, toDeviceID id: String) {
         registry.attachLastKnownLocation(location, toDeviceID: id)
+    }
+
+    func toggleFavorite(id: String) {
+        registry.toggleFavorite(id: id)
+    }
+
+    func ignore(id: String) {
+        registry.ignore(id: id)
+        onIgnoredDeviceIDsChanged?(registry.ignoredDeviceIDs)
+    }
+
+    func unignore(id: String) {
+        registry.unignore(id: id)
+        onIgnoredDeviceIDsChanged?(registry.ignoredDeviceIDs)
+    }
+
+    func restoreIgnoredDeviceIDs(_ ids: Set<String>) {
+        registry.setIgnoredDeviceIDs(ids)
     }
 
     func startScanning() {
@@ -86,10 +107,12 @@ extension BLEScanner: CBCentralManagerDelegate {
             ?? (advertisementData[CBAdvertisementDataLocalNameKey] as? String)
             ?? ""
         let rssi = RSSI.doubleValue
+        let manufacturerData = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data
+        let kind = DeviceKindClassifier.classify(name: name, manufacturerData: manufacturerData)
 
         Task { @MainActor in
             self.notifiedStaleIDs.remove(id)
-            self.registry.recordSighting(id: id, name: name, rssi: rssi, at: Date())
+            self.registry.recordSighting(id: id, name: name, kind: kind, rssi: rssi, at: Date())
 
             var engine = self.engines[id] ?? ProximityEngine()
             if let reading = engine.ingest(rssi: rssi) {

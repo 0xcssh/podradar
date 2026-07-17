@@ -101,7 +101,7 @@ cancel duplicate push-triggered device runs.
 | Team ID | `8L8G4P4Z9X` (GitHub variable `APPLE_TEAM_ID`, shared with RepLock/Loopa) |
 | Bundle ID | `com.awdia.podradar` |
 | App Group | `group.com.podradar.app` — **NOT YET CREATED in the portal.** First archive attempt (2026-07-17) failed with "Provisioning profile doesn't match the entitlements file's value for the com.apple.security.application-groups entitlement" — automatic signing can't register an App Group that doesn't exist yet (same issue RepLock/Loopa hit). Entitlements removed from project.yml until the user creates the group manually in the portal; DeviceStore.swift already falls back to `UserDefaults.standard` so nothing breaks meanwhile. Re-add the entitlements block once created. |
-| Subscriptions | `com.awdia.podradar.pro.weekly` — 4,99 €/wk, 3-day free trial; `com.awdia.podradar.pro.yearly` — 29,99 €/yr anchor (to create in ASC at M4) |
+| Subscriptions | `com.awdia.podradar.pro.weekly` — **launch at 2,99 €/wk** (matches PodSpot's live paywall price, the proven revenue benchmark — see app-marketing-context.md), 3-day free trial; raise/A-B test toward 4,99 € once real subscribers validate the funnel; `com.awdia.podradar.pro.yearly` — 29,99 €/yr anchor (to create in ASC at M4) |
 | Test device | Same iPhone 16 Pro Max already registered in the portal (RepLock) |
 | Signing | Same certs/API key as RepLock/Loopa — GitHub secrets `CERT_P12_BASE64`, `CERT_DIST_P12_BASE64`, `CERT_P12_PASSWORD`, `ASC_*` (must be re-added to THIS repo — secrets don't carry across repos). Local material in `C:\Users\awdia\replock-signing\` — never commit. |
 | Permissions | `NSBluetoothAlwaysUsageDescription`, `NSLocationWhenInUseUsageDescription` (map feature only, no background location) |

@@ -6,19 +6,28 @@ import Foundation
 /// the user cared enough to keep.
 final class DeviceStore {
     private let defaults: UserDefaults
-    private let key = "com.awdia.podradar.savedDevices"
+    private let devicesKey = "com.awdia.podradar.savedDevices"
+    private let ignoredKey = "com.awdia.podradar.ignoredDeviceIDs"
 
     init(suiteName: String = "group.com.podradar.app") {
         self.defaults = UserDefaults(suiteName: suiteName) ?? .standard
     }
 
     func load() -> [BLEDevice] {
-        guard let data = defaults.data(forKey: key) else { return [] }
+        guard let data = defaults.data(forKey: devicesKey) else { return [] }
         return (try? JSONDecoder().decode([BLEDevice].self, from: data)) ?? []
     }
 
     func save(_ devices: [BLEDevice]) {
         guard let data = try? JSONEncoder().encode(devices) else { return }
-        defaults.set(data, forKey: key)
+        defaults.set(data, forKey: devicesKey)
+    }
+
+    func loadIgnoredDeviceIDs() -> Set<String> {
+        Set(defaults.stringArray(forKey: ignoredKey) ?? [])
+    }
+
+    func saveIgnoredDeviceIDs(_ ids: Set<String>) {
+        defaults.set(Array(ids), forKey: ignoredKey)
     }
 }

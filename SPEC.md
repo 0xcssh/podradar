@@ -32,16 +32,12 @@ a differentiating last-known-position map.
       tests (ProximityEngine, DeviceRegistry), minimal 3-tab app shell
       (Radar/Map/Settings) that builds. Pending: first green CI run +
       first signed IPA installed on device.
-- [ ] M1 — BLE scanning validated on device: BLEScanner discovers real
-      peripherals, proximity percentage + hot/cold feel accurate and
-      responsive walking around a room. This is the first "can't test in
-      CI" milestone — expect several device iterations to tune
-      `ProximityEngine.attackSmoothing`/`releaseSmoothing`/`pathLossExponent`
-      against real hardware (AirPods, third-party earbuds, a smartwatch).
-      First field test 2026-07-17 (own iPhone as BLE source): 100% reached
-      correctly on close approach but felt laggy — fixed by switching to
-      asymmetric attack/release smoothing (fast toward closer, slow toward
-      farther); pending re-test.
+- [x] M1 — BLE scanning validated on device ✅ 2026-07-17: proximity %
+      reaches 100% correctly on close approach with acceptable lag (fixed
+      via asymmetric attack/release EMA), and a stationary reading no
+      longer jumps around (fixed via median-of-3 pre-filter rejecting
+      single-sample RSSI noise). Both field-tested and user-confirmed
+      "ça fait l'affaire".
 - [ ] M2 — device list polish: naming heuristics (map common BLE service
       UUIDs / name patterns to DeviceKind icons), favorites, ignore-list
       for noisy irrelevant BLE beacons (the biggest UX complaint risk in

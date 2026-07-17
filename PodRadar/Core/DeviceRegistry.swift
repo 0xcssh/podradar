@@ -7,6 +7,10 @@ import Foundation
 /// to record GPS).
 struct DeviceRegistry: Equatable {
     private(set) var devicesByID: [String: BLEDevice] = [:]
+    /// Devices the user explicitly dismissed as irrelevant (a neighbor's
+    /// speaker, a smart-home beacon...). Persisted separately from
+    /// favorites via DeviceStore — see Services/DeviceStore.swift.
+    private(set) var ignoredDeviceIDs: Set<String> = []
 
     enum Change: Equatable {
         case added(BLEDevice)
@@ -28,6 +32,9 @@ struct DeviceRegistry: Equatable {
             existing.lastRSSI = rssi
             existing.lastSeen = date
             if !name.isEmpty { existing.name = name }
+            // Upgrade-only: a later ambiguous read should never downgrade
+            // an already-classified device back to .unknown.
+            if existing.kind == .unknown, kind != .unknown { existing.kind = kind }
             devicesByID[id] = existing
             return .updated(existing)
         } else {
@@ -66,10 +73,25 @@ struct DeviceRegistry: Equatable {
         devicesByID[id] = device
     }
 
-    /// Devices currently considered in range, sorted closest-first by RSSI.
+    mutating func ignore(id: String) {
+        ignoredDeviceIDs.insert(id)
+    }
+
+    mutating func unignore(id: String) {
+        ignoredDeviceIDs.remove(id)
+    }
+
+    /// Restores a previously-persisted ignore list (called once at launch
+    /// by the owner after loading from DeviceStore).
+    mutating func setIgnoredDeviceIDs(_ ids: Set<String>) {
+        ignoredDeviceIDs = ids
+    }
+
+    /// Devices currently considered in range, sorted closest-first by RSSI,
+    /// excluding anything the user ignored.
     func inRangeDevices(asOf now: Date, staleAfter: TimeInterval = 8) -> [BLEDevice] {
         devicesByID.values
-            .filter { !$0.isStale(asOf: now, staleAfter: staleAfter) }
+            .filter { !$0.isStale(asOf: now, staleAfter: staleAfter) && !ignoredDeviceIDs.contains($0.id) }
             .sorted { $0.lastRSSI > $1.lastRSSI }
     }
 
