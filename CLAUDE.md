@@ -28,7 +28,19 @@ iteration path.
 ⚠️ BLE scanning itself is the one thing that can NEVER be validated in
 CI/simulator — CoreBluetooth central scanning needs real hardware. Every
 change to `Services/BLEScanner.swift` or proximity tuning
-(`ProximityEngine.smoothing`/`pathLossExponent`) requires a device test.
+(`ProximityEngine.attackSmoothing`/`releaseSmoothing`/`pathLossExponent`)
+requires a device test.
+
+Field lesson (2026-07-17, first device test): reaching 100% on close
+approach worked, but felt laggy. A single symmetric EMA (`smoothing: 0.3`
+both directions) takes several samples to converge on a step change.
+Fixed with **asymmetric attack/release** — fast when a sample says
+"closer" (`attackSmoothing: 0.6`), slow when it says "farther"
+(`releaseSmoothing: 0.25`) — human perception tolerates a snappy
+"getting warmer" far more than flicker on "getting colder", so the two
+directions don't need matching time constants. Pinned by
+`ProximityEngineTests.testAttackIsFasterThanRelease`. Pending re-test on
+device.
 Keep the actual signal math in `Core/ProximityEngine.swift` (pure, tested)
 and treat `Services/BLEScanner.swift` as a thin, boring wrapper so there's
 as little untestable surface as possible.

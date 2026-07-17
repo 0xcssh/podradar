@@ -23,14 +23,40 @@ final class ProximityEngineTests: XCTestCase {
     }
 
     func testSmoothingDampensASingleSpike() {
-        var engine = ProximityEngine(smoothing: 0.3)
+        var engine = ProximityEngine()
         // Establish a stable baseline far away, then a single close spike —
         // the smoothed proximity should move toward it but not jump all
-        // the way there in one sample.
+        // the way there in one sample, even with a fast attack factor.
         for _ in 0..<5 { engine.ingest(rssi: -90) }
         let spike = engine.ingest(rssi: -40)!
         let unsmoothedClose = ProximityEngine.proximityScore(forRSSI: -40)
         XCTAssertLessThan(spike.proximity, unsmoothedClose)
+    }
+
+    func testAttackIsFasterThanRelease() {
+        // Same magnitude step in both directions; attack (getting closer)
+        // should close more of the gap in one sample than release (getting
+        // farther) — this is the fix for the field-reported "laggy at 100%"
+        // approach feel (2026-07-17).
+        var approaching = ProximityEngine()
+        for _ in 0..<5 { approaching.ingest(rssi: -70) }
+        let afterApproach = approaching.ingest(rssi: -50)!.smoothedRSSI
+
+        var receding = ProximityEngine()
+        for _ in 0..<5 { receding.ingest(rssi: -50) }
+        let afterRecede = receding.ingest(rssi: -70)!.smoothedRSSI
+
+        let approachGapClosed = afterApproach - (-70)
+        let recedeGapClosed = (-70) - afterRecede
+        XCTAssertGreaterThan(approachGapClosed, recedeGapClosed)
+    }
+
+    func testRepeatedCloseSamplesConvergeToNearMaxQuickly() {
+        var engine = ProximityEngine()
+        for _ in 0..<3 { engine.ingest(rssi: -90) }
+        var lastReading: ProximityReading?
+        for _ in 0..<4 { lastReading = engine.ingest(rssi: -40) }
+        XCTAssertGreaterThan(lastReading!.proximity, 0.9)
     }
 
     func testTrendDetectsWarmerAndColder() {

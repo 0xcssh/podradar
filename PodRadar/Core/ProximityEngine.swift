@@ -17,9 +17,15 @@ struct ProximityEngine {
     /// than fed into the filter.
     static let noiseFloorRSSI: Double = -100
 
-    /// Exponential moving average smoothing factor (0...1). Higher = more
-    /// reactive to new samples, lower = smoother but laggier.
-    var smoothing: Double = 0.3
+    /// Asymmetric exponential moving average: fast "attack" when a sample
+    /// says the device got CLOSER, slow "release" when it says farther.
+    /// Field-tested 2026-07-17: a symmetric filter (0.3 both ways) felt
+    /// laggy reaching 100% while walking toward the device — human
+    /// perception tolerates a snappy "getting warmer" far more than it
+    /// tolerates flicker on "getting colder", so the two directions don't
+    /// need matching time constants.
+    var attackSmoothing: Double = 0.6
+    var releaseSmoothing: Double = 0.25
 
     private(set) var smoothedRSSI: Double?
     private(set) var previousProximity: Double?
@@ -31,7 +37,9 @@ struct ProximityEngine {
         guard rssi >= Self.noiseFloorRSSI else { return nil }
 
         if let previous = smoothedRSSI {
-            smoothedRSSI = previous + smoothing * (rssi - previous)
+            // Higher (less negative) RSSI == closer == attack; lower == release.
+            let factor = rssi > previous ? attackSmoothing : releaseSmoothing
+            smoothedRSSI = previous + factor * (rssi - previous)
         } else {
             smoothedRSSI = rssi
         }
