@@ -11,6 +11,9 @@ enum PRColor {
     static let signal = Color(hex: "2FE6C9")
     /// Warm accent for the paywall / reward moments only.
     static let alert = Color(hex: "FF6B5B")
+    /// Gold — reserved for the "Unlock Premium" pill, so it reads as
+    /// distinct from the signal-teal proximity feedback.
+    static let premium = Color(hex: "D4A93B")
     static let background = Color(hex: "0A1420")
     static let card = Color(hex: "13233A")
 }

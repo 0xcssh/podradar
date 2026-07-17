@@ -23,6 +23,20 @@ a differentiating last-known-position map.
    visible later on the Map tab. This is the answer to the niche's #1
    complaint ("useless once the device goes out of range/off").
 
+## Home screen (shipped 2026-07-17)
+
+RadarView now opens on an idle hero screen instead of a live list —
+reproduces PodSpot's actual home screen (reference screenshot reviewed
+same day): wordmark, "Tap to Scan" hook + big circular tap target, an
+"Unlock Premium" pill (→ `PaywallPlaceholderView` stub until M4), and a
+"Previous Locations" pill (→ `PreviousLocationsView`, reads the same
+`lastKnownLocation` data the Map tab will use once M3 wires
+LocationRecorder end to end). Adapted to PodRadar's navy/teal identity
+rather than copying PodSpot's blue/gold. The underlying BLE scan still
+runs continuously regardless of which UI state is showing (RootView owns
+that lifecycle) — tapping the circle only reveals the list, it doesn't
+start/stop the radio.
+
 ## Non-goals (v1)
 
 - No detection of powered-off devices or closed AirPods cases — the Find
