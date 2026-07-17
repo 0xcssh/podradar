@@ -37,11 +37,12 @@ targets:
         UIRequiresFullScreen: true
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
-    entitlements:
-      path: PodRadar/PodRadar.entitlements
-      properties:
-        com.apple.security.application-groups:
-          - group.com.podradar.app
+    # No entitlements yet: the App Group (group.com.podradar.app) doesn't
+    # exist in the Apple Developer portal, and automatic signing can't
+    # match a provisioning profile to an entitlement for a group that
+    # isn't registered (same chicken-and-egg RepLock/Loopa hit — see
+    # CLAUDE.md). DeviceStore falls back to UserDefaults.standard until
+    # the group is created manually and this is re-added.
 
   PodRadarTests:
     type: bundle.unit-test
