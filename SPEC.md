@@ -92,25 +92,33 @@ start/stop the radio.
       longer jumps around (fixed via median-of-3 pre-filter rejecting
       single-sample RSSI noise). Both field-tested and user-confirmed
       "ça fait l'affaire".
-- [ ] M2 — device list polish: naming heuristics (map common BLE service
-      UUIDs / name patterns to DeviceKind icons), favorites, ignore-list
-      for noisy irrelevant BLE beacons (the biggest UX complaint risk in
-      this niche — too many irrelevant devices in the list).
-- [ ] M3 — last-known-position map: LocationRecorder wired to
-      BLEScanner.onDeviceWentStale, Map tab renders pins, "last seen X
-      minutes ago at [address]" copy.
-- [ ] M4 — onboarding + paywall: short funnel (hook → how it works →
-      permissions pre-prompts → hard paywall), StoreKit 2
-      SubscriptionManager already scaffolded — wire real product IDs in
-      ASC (`com.awdia.podradar.pro.weekly` 4,99€/wk 3-day trial,
-      `.pro.yearly` 29,99€/yr anchor), dev paywall bypass for iteration
-      (REMOVE before submission).
-- [ ] M5 — localization: en source + fr/es/de/it/pt-BR from day 1 (the
-      niche's biggest gap — see app-marketing-context.md), xcstrings
-      catalog, ASC metadata in all 6 locales.
-- [ ] M6 — submission prep: app icon (real artwork, not the placeholder
-      Theme.swift palette), screenshots (radar hero → map → hot/cold),
-      privacy questionnaire, legal pages, remove all dev escape hatches,
+- [x] M2 — device list polish ✅: DeviceKindClassifier (Apple proximity-
+      pairing + name heuristics), favorites, ignore-list, RSSI floor
+      (-70dBm) to stop the list flooding with weak signals, per-device
+      rename with local persistence, stable first-seen ordering (no more
+      reshuffling as RSSI fluctuates).
+- [x] M3 — last-known-position map ✅: LocationRecorder wired to both
+      BLEScanner.onDeviceWentStale (automatic) AND the "Found it!" → Save
+      Location flow (explicit, with a description field), Map tab +
+      Previous Locations both render it.
+- [x] M4 — paywall ✅: real PaywallView matching PodSpot's reference
+      exactly, ASC subscription live (`com.awdia.podradar.pro.weekly`,
+      2,99 $/wk + 3-day trial, priced in all 175 territories), sandbox
+      purchase confirmed working end to end 2026-07-19.
+      **Onboarding funnel NOT built** — app currently opens straight to
+      the hero "Tap to Scan" screen with no hook/permissions-explainer
+      steps (matches PodSpot's own minimal flow, but worth a product call
+      before submission — see Open product decisions).
+- [ ] M5 — localization: en source + fr/es/de/it/pt-BR (the niche's
+      biggest ASO gap vs PodSpot, which is English-only and abandoned —
+      see app-marketing-context.md). NOT STARTED: all UI strings are
+      still hardcoded English literals, not routed through
+      Shared/Localizable.xcstrings.
+- [ ] M6 — submission prep: **real app icon** (still the placeholder
+      Theme.swift palette, needs user-supplied artwork like RepLock's),
+      screenshots (radar hero → map → hot/cold), App Privacy
+      questionnaire in ASC, legal pages (privacy policy + terms — no
+      `podradar-legal` repo exists yet), remove any dev-only affordances,
       flip repo private, submit.
 
 ## Open product decisions
