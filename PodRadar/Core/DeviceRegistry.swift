@@ -87,11 +87,25 @@ struct DeviceRegistry: Equatable {
         ignoredDeviceIDs = ids
     }
 
-    /// Devices currently considered in range, sorted closest-first by RSSI,
-    /// excluding anything the user ignored.
-    func inRangeDevices(asOf now: Date, staleAfter: TimeInterval = 8) -> [BLEDevice] {
+    /// RSSI floor for a device to appear in the Devices list at all.
+    /// Field-reported 2026-07-19: with no floor, the list dumped 9-10
+    /// devices at once (mostly "Unknown device" — every faint BLE signal
+    /// in the building) instead of revealing devices progressively as the
+    /// user gets close, the way PodSpot's reference recording does.
+    /// -70dBm is roughly "same room" in a typical indoor environment;
+    /// tune from field feedback.
+    static let listMinimumRSSI: Double = -70
+
+    /// Devices currently considered in range AND strong enough to be
+    /// worth showing, sorted closest-first by RSSI, excluding anything
+    /// the user ignored.
+    func inRangeDevices(asOf now: Date, staleAfter: TimeInterval = 8, minimumRSSI: Double = listMinimumRSSI) -> [BLEDevice] {
         devicesByID.values
-            .filter { !$0.isStale(asOf: now, staleAfter: staleAfter) && !ignoredDeviceIDs.contains($0.id) }
+            .filter {
+                !$0.isStale(asOf: now, staleAfter: staleAfter)
+                    && !ignoredDeviceIDs.contains($0.id)
+                    && $0.lastRSSI >= minimumRSSI
+            }
             .sorted { $0.lastRSSI > $1.lastRSSI }
     }
 

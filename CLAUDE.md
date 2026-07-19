@@ -88,6 +88,20 @@ huge latency, not progressive." Two compounding causes, both fixed:
    small stationary noise still gets filtered. `attackSmoothing` also
    bumped 0.5→0.6. Pinned by `testLargeJumpBypassesMedianForFastResponse`.
 
+**List-flooding lesson (2026-07-19):** the Devices list showed 9-10
+entries at once (mostly "Unknown device") instead of revealing devices
+progressively like the reference recording — every BLE peripheral in the
+building was being listed regardless of signal strength. Fixed with
+`DeviceRegistry.listMinimumRSSI` (-70dBm default): `inRangeDevices` now
+filters weak signals, not just stale ones. Tune from field feedback (a
+stricter floor = fewer, more-plausible results but risks hiding a genuine
+target device that's just far away in the same room). Pinned by
+`testWeakSignalDevicesExcludedFromList`. Two duplicate "AirPods Pro"
+entries were also observed in the same field test (possibly the left/
+right earbud each broadcasting separately, or two different people's
+AirPods, or Apple's Bluetooth address rotation — not root-caused yet; the
+RSSI floor alone should reduce it but if it persists, revisit).
+
 Second field lesson (same day, next test): the fast attack factor let raw
 RSSI noise pass through almost unfiltered, so the reading "jumped around
 a lot" with the phone held perfectly still — real BLE RSSI wobbles ±5-10

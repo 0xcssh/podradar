@@ -43,11 +43,36 @@ final class DeviceRegistryTests: XCTestCase {
     func testInRangeDevicesSortedClosestFirst() {
         var registry = DeviceRegistry()
         let now = Date()
-        registry.recordSighting(id: "far", name: "Far", rssi: -80, at: now)
+        // Both above the default listMinimumRSSI floor (-70) — see
+        // testWeakSignalDevicesExcludedFromList for the floor itself.
+        registry.recordSighting(id: "far", name: "Far", rssi: -68, at: now)
         registry.recordSighting(id: "near", name: "Near", rssi: -45, at: now)
 
         let inRange = registry.inRangeDevices(asOf: now)
         XCTAssertEqual(inRange.map(\.id), ["near", "far"])
+    }
+
+    func testWeakSignalDevicesExcludedFromList() {
+        // Field-reported 2026-07-19: with no RSSI floor, the Devices list
+        // dumped 9-10 entries at once (mostly every faint "Unknown device"
+        // signal in the building) instead of revealing devices
+        // progressively as the user gets close, like the reference app.
+        var registry = DeviceRegistry()
+        let now = Date()
+        registry.recordSighting(id: "weak", name: "Weak", rssi: -85, at: now)
+        registry.recordSighting(id: "strong", name: "Strong", rssi: -60, at: now)
+
+        let inRange = registry.inRangeDevices(asOf: now)
+        XCTAssertEqual(inRange.map(\.id), ["strong"])
+    }
+
+    func testInRangeDevicesMinimumRSSIIsConfigurable() {
+        var registry = DeviceRegistry()
+        let now = Date()
+        registry.recordSighting(id: "weak", name: "Weak", rssi: -85, at: now)
+
+        XCTAssertTrue(registry.inRangeDevices(asOf: now).isEmpty)
+        XCTAssertEqual(registry.inRangeDevices(asOf: now, minimumRSSI: -90).map(\.id), ["weak"])
     }
 
     func testMarkStaleDevicesReturnsOnlyStaleOnes() {
