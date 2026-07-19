@@ -23,6 +23,40 @@ a differentiating last-known-position map.
    visible later on the Map tab. This is the answer to the niche's #1
    complaint ("useless once the device goes out of range/off").
 
+## Full flow rebuild to match PodSpot exactly (shipped 2026-07-19)
+
+User shared paid + free screen recordings of PodSpot's actual flow and
+asked for the same design AND functionality, not just inspiration.
+Rebuilt around it end to end:
+
+- **Devices list** (was: dark live list) → light gray/white screen, white
+  card rows (icon, name, generic "NEAR" pill — no live percentage; that
+  precision is the paid feature), "Tap on your device to track down its
+  precise location" subtitle, "Can't see your device?" button, X to close
+  back to the hero screen. Swipe-to-ignore/favorite preserved from M2.
+- **Paywall** (was: a stub) → real `PaywallView`: blue radar-pulse hero,
+  "Pinpoint Your Device's Exact Location" headline, "Unlock Premium"
+  badge, 3 checkmarked bullets, sticky trial CTA wired to
+  `SubscriptionManager.purchase()` with live price/trial text from
+  StoreKit, "Already Subscribed?" restore link. Gates every device tap:
+  subscribed → `DeviceFinderView`, free → paywall sheet.
+- **DeviceFinderView** → background now tints continuously from red
+  (far) to green (close) as proximity rises (`PRColor.proximityBackground`),
+  concentric target rings derived from that one color via `lightened(by:)`,
+  "Found it!"/"Cancel" buttons (was: a static navy screen with a
+  teal-only ring).
+- **Found it! → Save Location** (new): confirmation alert, then a
+  description field + MapKit preview + Save Location button, matching
+  PodSpot's screen exactly. Writes into the same `LastKnownLocation` (now
+  with an optional `note`) the Map tab / Previous Locations already read —
+  this IS M3's last-known-position feature, just reached through the
+  "Found it!" flow instead of automatic staleness detection alone (both
+  paths write the same data).
+- Navigation rearchitected around a single `NavigationPath` (`RadarRoute`
+  enum: `.finder`, `.saveLocation`) owned by RadarView and threaded down
+  via `@Binding`, so "Save Location" can pop all the way back to the
+  Devices list in one action instead of one level at a time.
+
 ## Home screen (shipped 2026-07-17)
 
 RadarView now opens on an idle hero screen instead of a live list —

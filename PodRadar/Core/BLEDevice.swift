@@ -47,11 +47,13 @@ enum DeviceKind: String, Codable, CaseIterable {
     case unknown
 }
 
-/// GPS snapshot recorded the last time a device transitioned from
-/// in-range to stale — this is the "last known position" map feature,
-/// PodRadar's differentiator over PodSpot/Wunderfind.
+/// GPS snapshot of where a device was found — either stamped
+/// automatically on the in-range→stale transition, or saved explicitly by
+/// the user from the "Found it!" flow (matches PodSpot's Save Location
+/// screen, reviewed 2026-07-19) with an optional description.
 struct LastKnownLocation: Equatable, Codable {
     let latitude: Double
     let longitude: Double
     let recordedAt: Date
+    var note: String? = nil
 }

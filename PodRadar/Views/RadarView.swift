@@ -4,70 +4,127 @@ import UIKit
 
 struct RadarView: View {
     @EnvironmentObject private var scanner: BLEScanner
+    @EnvironmentObject private var subscriptionManager: SubscriptionManager
     /// The scan itself always runs (RootView owns that lifecycle) — this
     /// only gates which UI is shown, matching PodSpot's hero-screen-first
     /// pattern (reference screenshot reviewed 2026-07-17) rather than
     /// dumping a live list on the user immediately.
     @State private var hasTappedScan = false
+    @State private var path = NavigationPath()
+    @State private var showPaywall = false
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             Group {
                 if let message = bluetoothProblemMessage {
                     bluetoothProblemState(message)
                 } else if !hasTappedScan {
                     HeroScanView(onTapScan: { hasTappedScan = true })
-                } else if scanner.registry.inRangeDevices(asOf: .now).isEmpty {
-                    emptyState
                 } else {
+                    devicesListScreen
+                }
+            }
+            .navigationDestination(for: RadarRoute.self) { route in
+                switch route {
+                case .finder(let deviceID):
+                    DeviceFinderView(deviceID: deviceID, path: $path)
+                case .saveLocation(let deviceID, let deviceName):
+                    SaveLocationView(deviceID: deviceID, deviceName: deviceName, path: $path)
+                }
+            }
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
+        }
+    }
+
+    /// "Devices" screen: matches PodSpot's list (screen recording reviewed
+    /// 2026-07-19) — light background, white cards, a generic "NEAR" pill
+    /// (not a live percentage — that precision is the paid feature, shown
+    /// only once a device is tapped and opens DeviceFinderView).
+    private var devicesListScreen: some View {
+        ZStack {
+            LinearGradient(
+                colors: [PRColor.lightBackgroundTop, PRColor.lightBackgroundBottom],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            if scanner.registry.inRangeDevices(asOf: .now).isEmpty {
+                emptyState
+            } else {
+                VStack(spacing: 0) {
+                    Text("Tap on your device to track down its precise location")
+                        .font(.subheadline)
+                        .foregroundStyle(PRColor.lightTextSecondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 16)
+                        .padding(.bottom, 8)
+
                     List {
                         ForEach(scanner.registry.inRangeDevices(asOf: .now)) { device in
-                            NavigationLink {
-                                DeviceFinderView(deviceID: device.id)
+                            Button {
+                                openDevice(device)
                             } label: {
-                                DeviceRow(device: device, reading: scanner.proximityByDeviceID[device.id])
+                                DevicesListRow(device: device)
                             }
-                                .listRowBackground(Color.clear)
-                                .listRowSeparator(.hidden)
-                                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                                .swipeActions(edge: .trailing) {
-                                    Button(role: .destructive) {
-                                        scanner.ignore(id: device.id)
-                                    } label: {
-                                        Label("Ignore", systemImage: "eye.slash")
-                                    }
-                                    Button {
-                                        scanner.toggleFavorite(id: device.id)
-                                    } label: {
-                                        Label(
-                                            device.isFavorite ? "Unfavorite" : "Favorite",
-                                            systemImage: device.isFavorite ? "star.slash" : "star"
-                                        )
-                                    }
-                                    .tint(PRColor.signal)
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive) {
+                                    scanner.ignore(id: device.id)
+                                } label: {
+                                    Label("Ignore", systemImage: "eye.slash")
                                 }
+                                Button {
+                                    scanner.toggleFavorite(id: device.id)
+                                } label: {
+                                    Label(
+                                        device.isFavorite ? "Unfavorite" : "Favorite",
+                                        systemImage: device.isFavorite ? "star.slash" : "star"
+                                    )
+                                }
+                                .tint(PRColor.devicesBlue)
+                            }
                         }
                     }
                     .scrollContentBackground(.hidden)
                     .listStyle(.plain)
+
+                    Text("Can't see your device?")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(PRColor.lightText)
+                        .padding(.vertical, 14)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.black.opacity(0.06), in: Capsule())
+                        .padding(.horizontal, 40)
+                        .padding(.bottom, 20)
                 }
             }
-            .background(PRColor.background.ignoresSafeArea())
-            .navigationTitle(hasTappedScan ? "PodRadar" : "")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(PRColor.background, for: .navigationBar)
-            .toolbar {
-                if hasTappedScan {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            hasTappedScan = false
-                        } label: {
-                            Image(systemName: "chevron.left")
-                                .foregroundStyle(.white)
-                        }
-                    }
+        }
+        .navigationTitle("Devices")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    hasTappedScan = false
+                } label: {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(PRColor.lightText)
                 }
             }
+        }
+    }
+
+    private func openDevice(_ device: BLEDevice) {
+        if subscriptionManager.isSubscribed {
+            path.append(RadarRoute.finder(deviceID: device.id))
+        } else {
+            showPaywall = true
         }
     }
 
@@ -113,18 +170,17 @@ struct RadarView: View {
         VStack(spacing: 12) {
             Image(systemName: "dot.radiowaves.left.and.right")
                 .font(.system(size: 48))
-                .foregroundStyle(PRColor.signal)
+                .foregroundStyle(PRColor.devicesBlue)
             Text("Scanning for nearby devices…")
                 .font(.headline)
-                .foregroundStyle(.white)
+                .foregroundStyle(PRColor.lightText)
             Text("Make sure your headphones are powered on and nearby.")
                 .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.6))
+                .foregroundStyle(PRColor.lightTextSecondary)
                 .multilineTextAlignment(.center)
         }
         .padding(.top, 80)
         .frame(maxWidth: .infinity)
-        .background(PRColor.background.ignoresSafeArea())
     }
 }
 
@@ -163,7 +219,7 @@ private struct HeroScanView: View {
             }
 
             NavigationLink {
-                PaywallPlaceholderView()
+                PaywallView()
             } label: {
                 Label("Unlock Premium", systemImage: "star.fill")
                     .font(.subheadline.weight(.semibold))
@@ -217,48 +273,42 @@ private struct HeroScanView: View {
     }
 }
 
-private struct DeviceRow: View {
+private struct DevicesListRow: View {
     let device: BLEDevice
-    let reading: ProximityReading?
 
     var body: some View {
         HStack(spacing: 14) {
             Image(systemName: device.kind.symbolName)
-                .font(.title2)
-                .foregroundStyle(PRColor.signal)
-                .frame(width: 36)
+                .font(.title3)
+                .foregroundStyle(PRColor.lightTextSecondary)
+                .frame(width: 28)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(device.name.isEmpty ? "Unknown device" : device.name)
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                if let reading {
-                    Text(trendLabel(reading.trend))
-                        .font(.caption)
-                        .foregroundStyle(.white.opacity(0.6))
-                }
-            }
-            Spacer()
+            Text(device.name.isEmpty ? "Unknown device" : device.name)
+                .font(.body.weight(.medium))
+                .foregroundStyle(PRColor.lightText)
+
             if device.isFavorite {
                 Image(systemName: "star.fill")
                     .font(.caption)
-                    .foregroundStyle(PRColor.signal)
+                    .foregroundStyle(PRColor.premium)
             }
-            if let reading {
-                Text("\(reading.percent)%")
-                    .font(.title2.bold())
-                    .foregroundStyle(PRColor.signal)
-            }
-        }
-        .prCard()
-    }
 
-    private func trendLabel(_ trend: ProximityTrend) -> String {
-        switch trend {
-        case .warmer: return "Getting closer"
-        case .colder: return "Getting farther"
-        case .steady: return "Steady"
+            Spacer()
+
+            Image(systemName: "location.fill")
+                .font(.caption)
+                .foregroundStyle(PRColor.devicesBlue)
+            Text("NEAR")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(PRColor.nearBadge, in: Capsule())
         }
+        .padding(.vertical, 14)
+        .padding(.horizontal, 16)
+        .background(PRColor.lightCard, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: .black.opacity(0.06), radius: 8, y: 2)
     }
 }
 

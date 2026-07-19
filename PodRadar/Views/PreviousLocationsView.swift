@@ -39,6 +39,11 @@ struct PreviousLocationsView: View {
                             Text(location.recordedAt, style: .relative)
                                 .font(.caption)
                                 .foregroundStyle(.white.opacity(0.6))
+                            if let note = location.note, !note.isEmpty {
+                                Text(note)
+                                    .font(.caption)
+                                    .foregroundStyle(PRColor.signal)
+                            }
                         }
                     }
                     .listRowBackground(PRColor.card)
