@@ -176,12 +176,13 @@ struct RadarView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
             if scanner.bluetoothState == .unauthorized {
-                Button("Open Settings") {
+                Button {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
                         UIApplication.shared.open(url)
                     }
+                } label: {
+                    Text("Open Settings").prPrimaryPill()
                 }
-                .prPrimaryPill()
                 .padding(.horizontal, 60)
             }
         }

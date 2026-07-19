@@ -61,10 +61,11 @@ struct MapView: View {
             Text("PodRadar can remember where a device was last detected.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.white)
-            Button("Enable Location") {
+            Button {
                 locationRecorder.requestAuthorization()
+            } label: {
+                Text("Enable Location").prPrimaryPill()
             }
-            .prPrimaryPill()
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -80,12 +81,13 @@ struct MapView: View {
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.white)
                 .padding(.horizontal, 24)
-            Button("Open Settings") {
+            Button {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)
                 }
+            } label: {
+                Text("Open Settings").prPrimaryPill()
             }
-            .prPrimaryPill()
             .padding(.horizontal, 40)
         }
         .padding()

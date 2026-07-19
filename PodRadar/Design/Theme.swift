@@ -49,18 +49,22 @@ extension View {
             .background(PRColor.card, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
     }
 
+    /// Styles a Button's LABEL content — call this INSIDE the trailing
+    /// closure of `Button { action } label: { Text("…").prPrimaryPill() }`,
+    /// never on the `Button` itself. Field-reported 2026-07-19: applying
+    /// this style (or even a bare `.contentShape(Rectangle())`) to the
+    /// outside of a `Button(String) { action }` convenience-initializer
+    /// button still only registered taps near the text glyphs, not across
+    /// the full rendered pill — a known SwiftUI gotcha where the button's
+    /// gesture recognizer sizes itself before frame/contentShape modifiers
+    /// applied outside the button take effect. Putting contentShape on the
+    /// LABEL itself (inside the button) is the reliable fix.
     func prPrimaryPill() -> some View {
         self
             .font(.headline)
             .foregroundStyle(.black)
             .padding(.vertical, 16)
             .frame(maxWidth: .infinity)
-            // Field-reported 2026-07-19: a button styled this way (frame
-            // widened via modifiers applied to the Button itself, not
-            // inside its label) could render as a full-width pill but only
-            // respond to taps on the tight text glyph bounds — a known
-            // SwiftUI gotcha. contentShape forces hit-testing to the full
-            // visual frame.
             .contentShape(Rectangle())
             .background(PRColor.signal, in: Capsule())
     }
