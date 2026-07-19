@@ -283,6 +283,78 @@ PodRadarTests/        Unit tests (ProximityEngineTests, DeviceRegistryTests)
   the Find My protocol is private to Apple; PodRadar only sees BLE
   advertisements from devices that are on and in range.
 
+## Planned: onboarding + pulsing CTA + two-tier paywall (2026-07-20)
+
+Three asks, documented before implementing per user instruction.
+
+### 1. Short, sales-focused onboarding (fills the M4 gap)
+3 screens max, "Continue" progression, shown once (persisted flag, e.g.
+`hasCompletedOnboarding` in UserDefaults):
+1. **Hook** — the panic-losing-your-earbuds problem, radar visual.
+2. **How it works** — Scan → Follow the signal → Haptic guidance to
+   pinpoint it (3 icon+text steps).
+3. **Permission primer** — soft pre-prompt explaining WHY Bluetooth/
+   Location access will be requested (improves real system-prompt
+   opt-in rates), "Get Started" button.
+Ends by automatically presenting the paywall gate (see below) — the
+user never lands on the free app before seeing a paywall at least once.
+
+### 2. Pulsing "Tap to Scan" button
+HeroScanView's big circle currently only reacts to a press-down gesture.
+Add a continuous gentle breathing scale animation (subtle, ~3-6%,
+`.easeInOut(duration:).repeatForever(autoreverses:true)`) so it visibly
+draws the eye as the primary CTA, layered with (not replacing) the
+existing press feedback.
+
+### 3. Two-tier paywall cascade — exact sequence (confirmed with user
+after 4 rounds of clarification, do not re-derive from scratch):
+
+```
+State: hasDeclinedOnce (persisted bool), hasSeenTrialOffer (persisted bool)
+
+Any paywall gate (onboarding end, tapping a device while free, etc.):
+  if NOT hasSeenTrialOffer:
+    → show Paywall A (full price, NO trial, X to close)
+        → subscribed: done, isSubscribed = true
+        → X tapped:
+            - if hasDeclinedOnce is still false (this is the FIRST-EVER
+              decline) → set hasDeclinedOnce = true, land on free tier
+              (NEAR/FAR only). Paywall B is NOT shown this time.
+            - if hasDeclinedOnce is ALREADY true (this is at least the
+              2nd time ever declining Paywall A) → set
+              hasSeenTrialOffer = true, immediately show Paywall B
+              (same tier, WITH the 3-day free trial, X to close)
+                → subscribed: done
+                → X tapped: land on free tier
+  else (hasSeenTrialOffer already true):
+    → show Paywall B DIRECTLY every time from now on (skip Paywall A
+      entirely) — once the trial has been exposed once, keep offering
+      it until the user actually takes it. Never revert to Paywall A.
+        → subscribed: done
+        → X tapped: land on free tier
+```
+
+In short: decline #1 ever → nothing shown next time but the free tier.
+Decline #2 ever → Paywall B (trial) shown immediately as a downsell,
+AND from that point on every future gate goes straight to Paywall B
+(never A again) until the user subscribes.
+
+**Why two separate StoreKit products, not one:** an introductory offer
+(the 3-day trial) is a property of the PRODUCT + the user's eligibility,
+decided by Apple — a client app cannot show/hide a configured intro
+offer per-screen for the same product ID; eligible users always see it
+in the system purchase sheet once you call `purchase()` on that product.
+To have a genuinely trial-less Paywall A, it must purchase a DIFFERENT
+product with no introductory offer configured in ASC:
+- `com.awdia.podradar.pro.weekly` — existing, HAS the 3-day trial → used
+  by Paywall B only.
+- `com.awdia.podradar.pro.weekly.full` (new) — same price/period, NO
+  introductory offer → used by Paywall A.
+Both must be in the same subscription group at the same group level
+(mutually-exclusive alternate entry points to the same Pro tier) and
+`SubscriptionManager.isSubscribed`/`refreshEntitlements` must check
+BOTH product IDs.
+
 ## Status / roadmap (details in SPEC.md)
 
 - [~] M0 — pipeline: project.yml, GitHub Actions workflow, Core (with

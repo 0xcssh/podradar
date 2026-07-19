@@ -4,16 +4,33 @@ import SwiftUI
 /// Matches PodSpot's real paywall (screen recording reviewed 2026-07-19):
 /// radar-pulse hero circle, "Pinpoint Your Device's Exact Location"
 /// headline, "Unlock Premium" badge, 3 checkmarked benefit bullets, and a
-/// sticky bottom trial CTA. Presented whenever a free user taps a device
-/// row (precise tracking is the paid feature — the free tier only shows
-/// "Near").
+/// sticky bottom CTA. Two variants — see CLAUDE.md's two-tier paywall plan
+/// (2026-07-20): `.fullPrice` has no introductory offer (shown first, on
+/// every gate until the trial has been exposed once); `.trial` has the
+/// 3-day free trial (the downsell, shown after a 2nd decline and from
+/// then on). The X/swipe-to-dismiss action routes through
+/// PaywallCoordinator.decline(), which decides whether that cascades
+/// straight into the trial variant instead of actually closing.
 struct PaywallView: View {
+    let variant: PaywallVariant
+
     @EnvironmentObject private var subscriptionManager: SubscriptionManager
-    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var paywallCoordinator: PaywallCoordinator
     @State private var isPurchasing = false
 
-    private var weeklyProduct: Product? {
-        subscriptionManager.products.first { $0.id == SubscriptionManager.weeklyProductID }
+    init(variant: PaywallVariant = .trial) {
+        self.variant = variant
+    }
+
+    private var productID: String {
+        switch variant {
+        case .fullPrice: return SubscriptionManager.weeklyFullPriceProductID
+        case .trial: return SubscriptionManager.weeklyProductID
+        }
+    }
+
+    private var product: Product? {
+        subscriptionManager.products.first { $0.id == productID }
     }
 
     var body: some View {
@@ -68,7 +85,7 @@ struct PaywallView: View {
                     Button("Already Subscribed?") {
                         Task {
                             await subscriptionManager.refreshEntitlements()
-                            if subscriptionManager.isSubscribed { dismiss() }
+                            if subscriptionManager.isSubscribed { paywallCoordinator.subscribed() }
                         }
                     }
                 }
@@ -78,7 +95,7 @@ struct PaywallView: View {
             }
 
             Button {
-                dismiss()
+                paywallCoordinator.decline()
             } label: {
                 Image(systemName: "xmark")
                     .font(.headline)
@@ -103,7 +120,7 @@ struct PaywallView: View {
     /// App Store Connect (field-observed 2026-07-19); this gives the user
     /// something to act on instead of force-quitting the app.
     private var productLoadFailed: Bool {
-        !subscriptionManager.isLoadingProducts && weeklyProduct == nil
+        !subscriptionManager.isLoadingProducts && product == nil
     }
 
     private var radarHero: some View {
@@ -138,12 +155,12 @@ struct PaywallView: View {
 
     private var continueButton: some View {
         Button {
-            if let weeklyProduct {
+            if let product {
                 isPurchasing = true
                 Task {
-                    try? await subscriptionManager.purchase(weeklyProduct)
+                    try? await subscriptionManager.purchase(product)
                     isPurchasing = false
-                    if subscriptionManager.isSubscribed { dismiss() }
+                    if subscriptionManager.isSubscribed { paywallCoordinator.subscribed() }
                 }
             } else {
                 Task { await subscriptionManager.loadProducts() }
@@ -159,7 +176,7 @@ struct PaywallView: View {
                     VStack(spacing: 2) {
                         Text("Continue")
                             .font(.headline)
-                        Text(trialSubtitle)
+                        Text(priceSubtitle)
                             .font(.caption)
                             .opacity(0.9)
                     }
@@ -177,10 +194,16 @@ struct PaywallView: View {
     // why (String variables don't auto-localize like Text("literal")
     // does). The interpolated argument types become %lld/%@ placeholders
     // in the catalog key.
-    private var trialSubtitle: String {
-        guard let weeklyProduct else { return String(localized: "3 Days Free Trial") }
-        let price = weeklyProduct.displayPrice
-        if let intro = weeklyProduct.subscription?.introductoryOffer, intro.paymentMode == .freeTrial {
+    private var priceSubtitle: String {
+        guard let product else {
+            return variant == .trial ? String(localized: "3 Days Free Trial") : String(localized: "Weekly subscription")
+        }
+        let price = product.displayPrice
+        // .fullPrice's product has no introductory offer configured in
+        // ASC at all, so this branch is purely defensive — it should
+        // never actually fire for that variant.
+        if variant == .trial,
+           let intro = product.subscription?.introductoryOffer, intro.paymentMode == .freeTrial {
             let days = intro.period.value
             return String(localized: "\(days) Days Free Trial, \(price) / week")
         }

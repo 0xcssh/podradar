@@ -224,6 +224,26 @@
         "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Favorito" } }
       }
     },
+    "Feel It Get Closer" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Spüre, wie es näher kommt" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Feel It Get Closer" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Siente cómo se acerca" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Sens-le se rapprocher" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Sentilo avvicinarsi" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Sinta-o se aproximando" } }
+      }
+    },
+    "Follow the Signal" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Folge dem Signal" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Follow the Signal" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Sigue la señal" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Suis le signal" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Segui il segnale" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Siga o sinal" } }
+      }
+    },
     "Found it!" : {
       "localizations" : {
         "de" : { "stringUnit" : { "state" : "translated", "value" : "Gefunden!" } },
@@ -242,6 +262,36 @@
         "fr" : { "stringUnit" : { "state" : "translated", "value" : "Si tu cherches des AirPods, vérifie qu'ils ne sont pas dans leur boîtier" } },
         "it" : { "stringUnit" : { "state" : "translated", "value" : "Se stai cercando degli AirPods, assicurati che non siano nella custodia" } },
         "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Se você está procurando AirPods, verifique se eles não estão no estojo" } }
+      }
+    },
+    "Get Started" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Los geht's" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Get Started" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Comenzar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Commencer" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Inizia" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Começar" } }
+      }
+    },
+    "Haptic pulses speed up as you home in on it" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Haptische Impulse werden schneller, je näher du kommst" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Haptic pulses speed up as you home in on it" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Las vibraciones se aceleran a medida que te acercas" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Les vibrations s'accélèrent à mesure que tu te rapproches" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Le vibrazioni accelerano man mano che ti avvicini" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "As vibrações aceleram conforme você se aproxima" } }
+      }
+    },
+    "How It Works" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "So funktioniert's" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "How It Works" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cómo funciona" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Comment ça marche" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Come funziona" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Como funciona" } }
       }
     },
     "Ignore" : {
@@ -324,6 +374,26 @@
         "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Mova-se e siga a intensidade do sinal para encontrar seu dispositivo" } }
       }
     },
+    "Never Lose Your\nAirPods Again" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Verliere nie wieder\ndeine AirPods" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Never Lose Your\nAirPods Again" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "No vuelvas a perder\ntus AirPods" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ne perds plus jamais\ntes AirPods" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Non perdere mai più\ni tuoi AirPods" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Nunca mais perca\nseus AirPods" } }
+      }
+    },
+    "Next, we'll ask for Bluetooth and Location access — needed to scan for your devices and remember where you found them. Nothing is ever shared." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Als Nächstes bitten wir um Bluetooth- und Standortzugriff — nötig, um deine Geräte zu scannen und dir zu merken, wo du sie gefunden hast. Es wird nie etwas geteilt." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next, we'll ask for Bluetooth and Location access — needed to scan for your devices and remember where you found them. Nothing is ever shared." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "A continuación, pediremos acceso a Bluetooth y ubicación — necesario para buscar tus dispositivos y recordar dónde los encontraste. Nunca compartimos nada." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "On va te demander l'accès au Bluetooth et à la localisation — nécessaire pour scanner tes appareils et mémoriser où tu les as trouvés. Rien n'est jamais partagé." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ora ti chiederemo l'accesso a Bluetooth e posizione — necessario per scansionare i tuoi dispositivi e ricordare dove li hai trovati. Non condividiamo mai nulla." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Em seguida, pediremos acesso ao Bluetooth e à localização — necessário para escanear seus dispositivos e lembrar onde você os encontrou. Nada é compartilhado." } }
+      }
+    },
     "NEAR" : {
       "comment" : "Short badge label — keep very short in translation to fit the pill.",
       "localizations" : {
@@ -353,6 +423,56 @@
         "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune position enregistrée pour l'instant" } },
         "it" : { "stringUnit" : { "state" : "translated", "value" : "Ancora nessuna posizione precedente" } },
         "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ainda sem localizações anteriores" } }
+      }
+    },
+    "PodRadar finds every Bluetooth device around you" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar findet jedes Bluetooth-Gerät in deiner Nähe" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar finds every Bluetooth device around you" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar encuentra todos los dispositivos Bluetooth a tu alrededor" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar trouve tous les appareils Bluetooth autour de toi" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar trova ogni dispositivo Bluetooth intorno a te" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O PodRadar encontra todos os dispositivos Bluetooth ao seu redor" } }
+      }
+    },
+    "Quick Permission Check" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kurze Berechtigungsprüfung" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Quick Permission Check" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Verificación rápida de permisos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Petite vérification des autorisations" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Verifica rapida dei permessi" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Verificação rápida de permissões" } }
+      }
+    },
+    "Scan" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Scannen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Scan" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Escanear" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Scanner" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Scansiona" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Escanear" } }
+      }
+    },
+    "That panicked feeling when your earbuds vanish? PodRadar ends it in seconds." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Diese Panik, wenn deine Kopfhörer verschwunden sind? PodRadar beendet sie in Sekunden." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "That panicked feeling when your earbuds vanish? PodRadar ends it in seconds." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¿Ese momento de pánico cuando desaparecen tus auriculares? PodRadar lo termina en segundos." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Cette panique quand tes écouteurs disparaissent ? PodRadar y met fin en quelques secondes." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Quel senso di panico quando le tue cuffie spariscono? PodRadar lo risolve in pochi secondi." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Aquele pânico quando seu fone desaparece? O PodRadar resolve em segundos." } }
+      }
+    },
+    "Walk toward it and watch the signal strength rise" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Geh darauf zu und beobachte, wie die Signalstärke steigt" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Walk toward it and watch the signal strength rise" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Camina hacia él y observa cómo aumenta la señal" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Avance vers lui et regarde le signal augmenter" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Avvicinati e osserva il segnale aumentare" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Caminhe em direção a ele e veja o sinal aumentar" } }
       }
     },
     "Open Settings" : {
@@ -653,6 +773,16 @@
         "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appareil inconnu" } },
         "it" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo sconosciuto" } },
         "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo desconhecido" } }
+      }
+    },
+    "Weekly subscription" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wöchentliches Abonnement" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Weekly subscription" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Suscripción semanal" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Abonnement hebdomadaire" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Abbonamento settimanale" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Assinatura semanal" } }
       }
     },
     "Unlock Premium" : {

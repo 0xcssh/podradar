@@ -5,13 +5,13 @@ import UIKit
 struct RadarView: View {
     @EnvironmentObject private var scanner: BLEScanner
     @EnvironmentObject private var subscriptionManager: SubscriptionManager
+    @EnvironmentObject private var paywallCoordinator: PaywallCoordinator
     /// The scan itself always runs (RootView owns that lifecycle) — this
     /// only gates which UI is shown, matching PodSpot's hero-screen-first
     /// pattern (reference screenshot reviewed 2026-07-17) rather than
     /// dumping a live list on the user immediately.
     @State private var hasTappedScan = false
     @State private var path = NavigationPath()
-    @State private var showPaywall = false
     @State private var renamingDeviceID: String?
     @State private var renameText = ""
     @State private var showCantSeeDevice = false
@@ -36,8 +36,10 @@ struct RadarView: View {
                 }
             }
         }
-        .sheet(isPresented: $showPaywall) {
-            PaywallView()
+        .sheet(isPresented: paywallSheetBinding) {
+            if let variant = paywallCoordinator.presentedVariant {
+                PaywallView(variant: variant)
+            }
         }
         .sheet(isPresented: $showCantSeeDevice) {
             CantSeeDeviceView()
@@ -55,6 +57,17 @@ struct RadarView: View {
 
     private var renameAlertBinding: Binding<Bool> {
         Binding(get: { renamingDeviceID != nil }, set: { if !$0 { renamingDeviceID = nil } })
+    }
+
+    /// Swipe-to-dismiss on the sheet routes through the same decline()
+    /// path as tapping the X inside PaywallView — both need to respect a
+    /// possible cascade into the trial variant instead of actually
+    /// closing. See PaywallCoordinator.
+    private var paywallSheetBinding: Binding<Bool> {
+        Binding(
+            get: { paywallCoordinator.presentedVariant != nil },
+            set: { isPresented in if !isPresented { paywallCoordinator.decline() } }
+        )
     }
 
     /// "Devices" screen: matches PodSpot's list (screen recording reviewed
@@ -181,7 +194,7 @@ struct RadarView: View {
         if subscriptionManager.isSubscribed {
             path.append(RadarRoute.finder(deviceID: device.id))
         } else {
-            showPaywall = true
+            paywallCoordinator.requestGate()
         }
     }
 
@@ -253,7 +266,13 @@ struct RadarView: View {
 private struct HeroScanView: View {
     let isSubscribed: Bool
     let onTapScan: () -> Void
+    @EnvironmentObject private var paywallCoordinator: PaywallCoordinator
     @State private var isPressed = false
+    /// Field-requested 2026-07-20: make the scan button visibly draw the
+    /// eye as the primary CTA, not just react when pressed. Toggled once
+    /// on appear to drive a continuous breathing scale animation, layered
+    /// with (not replacing) the existing press-down feedback.
+    @State private var isPulsing = false
 
     var body: some View {
         VStack(spacing: 28) {
@@ -292,8 +311,8 @@ private struct HeroScanView: View {
                     .padding(.vertical, 12)
                     .background(PRColor.nearBadge, in: Capsule())
             } else {
-                NavigationLink {
-                    PaywallView()
+                Button {
+                    paywallCoordinator.requestGate()
                 } label: {
                     Label("Unlock Premium", systemImage: "star.fill")
                         .font(.subheadline.weight(.semibold))
@@ -311,6 +330,7 @@ private struct HeroScanView: View {
                     Circle()
                         .fill(PRColor.signal.opacity(0.15))
                         .frame(width: 220, height: 220)
+                        .scaleEffect(isPulsing ? 1.08 : 1)
                     Circle()
                         .fill(PRColor.card)
                         .frame(width: 180, height: 180)
@@ -318,9 +338,14 @@ private struct HeroScanView: View {
                         .font(.system(size: 56, weight: .medium))
                         .foregroundStyle(PRColor.signal)
                 }
-                .scaleEffect(isPressed ? 0.94 : 1)
+                .scaleEffect(isPressed ? 0.94 : (isPulsing ? 1.04 : 1))
             }
             .buttonStyle(.plain)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) {
+                    isPulsing = true
+                }
+            }
             .simultaneousGesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in isPressed = true }
