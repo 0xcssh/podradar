@@ -47,6 +47,10 @@ struct PaywallView: View {
                     radarHero
                         .padding(.top, 50)
 
+                    if variant == .trial {
+                        specialOfferBanner
+                    }
+
                     VStack(spacing: 10) {
                         Text("Pinpoint Your Device's\nExact Location")
                             .font(.title2.bold())
@@ -121,6 +125,29 @@ struct PaywallView: View {
     /// something to act on instead of force-quitting the app.
     private var productLoadFailed: Bool {
         !subscriptionManager.isLoadingProducts && product == nil
+    }
+
+    /// Only shown on the `.trial` variant — the downsell after a 2nd
+    /// decline (CLAUDE.md's two-tier paywall plan, 2026-07-20). Makes the
+    /// offer visually distinct from the full-price paywall the user just
+    /// dismissed, so it reads as a genuine better deal rather than the
+    /// same screen shown again.
+    private var specialOfferBanner: some View {
+        VStack(spacing: 6) {
+            Text("SPECIAL OFFER")
+                .font(.caption.weight(.heavy))
+                .tracking(1.2)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+                .background(PRColor.signal, in: Capsule())
+
+            Text("Just for you — try 3 days free before you pay a thing.")
+                .font(.footnote.weight(.medium))
+                .foregroundStyle(PRColor.lightTextSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+        }
     }
 
     private var radarHero: some View {

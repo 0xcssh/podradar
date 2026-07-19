@@ -12,6 +12,15 @@ final class PaywallCoordinator: ObservableObject {
     private var state: PaywallGateState
     private let store: DeviceStore
 
+    /// Set by `decline()` when the cascade rule says the trial variant
+    /// should follow. SwiftUI's `.sheet(isPresented:)` won't reliably
+    /// re-present if the underlying binding flips false→true within the
+    /// same synchronous update that's dismissing it (field-observed
+    /// 2026-07-20: the trial paywall silently never appeared) — so the
+    /// re-presentation is deferred to the sheet's `onDismiss`, which fires
+    /// only after the dismiss transition actually finishes.
+    private var pendingCascadeVariant: PaywallVariant?
+
     init(store: DeviceStore) {
         self.store = store
         self.state = store.loadPaywallGateState()
@@ -25,18 +34,29 @@ final class PaywallCoordinator: ObservableObject {
     }
 
     /// Call when the presented paywall is dismissed (X) without a
-    /// purchase. May immediately re-present the trial paywall as a
-    /// downsell — see PaywallGate's doc comment for the exact rule.
+    /// purchase. May queue the trial paywall as a downsell — see
+    /// PaywallGate's doc comment for the exact rule — but never presents
+    /// it directly; always closes the current sheet first.
     func decline() {
         guard let variant = presentedVariant else { return }
         let result = PaywallGate.handleDecline(of: variant, state: state)
         state = result.state
         store.savePaywallGateState(state)
-        presentedVariant = result.showTrialImmediately ? .trial : nil
+        pendingCascadeVariant = result.showTrialImmediately ? .trial : nil
+        presentedVariant = nil
+    }
+
+    /// Call from the paywall sheet's `onDismiss` once it has fully closed.
+    /// Re-presents the trial paywall if `decline()` queued a cascade.
+    func presentPendingCascadeIfNeeded() {
+        guard let pending = pendingCascadeVariant else { return }
+        pendingCascadeVariant = nil
+        presentedVariant = pending
     }
 
     /// Call once a purchase succeeds.
     func subscribed() {
+        pendingCascadeVariant = nil
         presentedVariant = nil
     }
 }

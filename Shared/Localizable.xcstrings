@@ -785,6 +785,26 @@
         "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Assinatura semanal" } }
       }
     },
+    "Just for you — try 3 days free before you pay a thing." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nur für dich — teste 3 Tage kostenlos, bevor du etwas bezahlst." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Just for you — try 3 days free before you pay a thing." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Solo para ti — prueba 3 días gratis antes de pagar nada." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Rien que pour toi — essaie 3 jours gratuits avant de payer quoi que ce soit." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Solo per te — prova 3 giorni gratis prima di pagare qualsiasi cosa." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Só para você — experimente 3 dias grátis antes de pagar qualquer coisa." } }
+      }
+    },
+    "SPECIAL OFFER" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "SONDERANGEBOT" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "SPECIAL OFFER" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "OFERTA ESPECIAL" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "OFFRE SPÉCIALE" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "OFFERTA SPECIALE" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "OFERTA ESPECIAL" } }
+      }
+    },
     "Unlock Premium" : {
       "localizations" : {
         "de" : { "stringUnit" : { "state" : "translated", "value" : "Premium freischalten" } },

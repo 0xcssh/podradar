@@ -36,7 +36,9 @@ struct RadarView: View {
                 }
             }
         }
-        .sheet(isPresented: paywallSheetBinding) {
+        .sheet(isPresented: paywallSheetBinding, onDismiss: {
+            paywallCoordinator.presentPendingCascadeIfNeeded()
+        }) {
             if let variant = paywallCoordinator.presentedVariant {
                 PaywallView(variant: variant)
             }
