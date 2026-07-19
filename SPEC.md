@@ -109,11 +109,16 @@ start/stop the radio.
       the hero "Tap to Scan" screen with no hook/permissions-explainer
       steps (matches PodSpot's own minimal flow, but worth a product call
       before submission — see Open product decisions).
-- [ ] M5 — localization: en source + fr/es/de/it/pt-BR (the niche's
-      biggest ASO gap vs PodSpot, which is English-only and abandoned —
-      see app-marketing-context.md). NOT STARTED: all UI strings are
-      still hardcoded English literals, not routed through
-      Shared/Localizable.xcstrings.
+- [x] M5 — localization ✅ 2026-07-19: all 68 user-facing strings across
+      every view + both permission prompts translated into
+      fr/es/de/it/pt-BR in Shared/Localizable.xcstrings and
+      PodRadar/InfoPlist.xcstrings. Along the way, fixed several spots
+      where a `String` (not `Text("literal")`) was passed to `Text(_:)` —
+      SwiftUI only auto-localizes the literal form; the verbatim overload
+      silently skips the catalog. Needs a device test to confirm strings
+      actually switch when the iPhone's language changes (can't verify
+      from CI/simulator alone) and to eyeball layout at the longer German/
+      French string lengths.
 - [ ] M6 — submission prep: **real app icon** (still the placeholder
       Theme.swift palette, needs user-supplied artwork like RepLock's),
       screenshots (radar hero → map → hot/cold), App Privacy

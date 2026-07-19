@@ -122,7 +122,10 @@ struct PaywallView: View {
         }
     }
 
-    private func benefitRow(_ text: String) -> some View {
+    // LocalizedStringKey (not String) so Text(text) below auto-localizes —
+    // a String parameter would take Text's verbatim overload instead,
+    // even when call sites pass literals.
+    private func benefitRow(_ text: LocalizedStringKey) -> some View {
         HStack(spacing: 12) {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(PRColor.nearBadge)
@@ -170,13 +173,17 @@ struct PaywallView: View {
         .disabled(isPurchasing || subscriptionManager.isLoadingProducts)
     }
 
+    // String(localized:) with interpolation — see CantSeeDeviceView for
+    // why (String variables don't auto-localize like Text("literal")
+    // does). The interpolated argument types become %lld/%@ placeholders
+    // in the catalog key.
     private var trialSubtitle: String {
-        guard let weeklyProduct else { return "3 Days Free Trial" }
+        guard let weeklyProduct else { return String(localized: "3 Days Free Trial") }
         let price = weeklyProduct.displayPrice
         if let intro = weeklyProduct.subscription?.introductoryOffer, intro.paymentMode == .freeTrial {
             let days = intro.period.value
-            return "\(days) Days Free Trial, \(price) / week"
+            return String(localized: "\(days) Days Free Trial, \(price) / week")
         }
-        return "\(price) / week"
+        return String(localized: "\(price) / week")
     }
 }

@@ -34,7 +34,7 @@ struct DeviceFinderView: View {
     var body: some View {
         VStack(spacing: 28) {
             VStack(spacing: 8) {
-                Text(device?.displayName ?? "Unknown device")
+                Text(device?.displayName ?? String(localized: "Unknown device"))
                     .font(.title2.bold())
                     .foregroundStyle(.white)
                 Text("Move around and follow the signal strength to find your device")
@@ -93,7 +93,7 @@ struct DeviceFinderView: View {
         .alert("Save Location", isPresented: $showSaveLocationPrompt) {
             Button("Cancel", role: .cancel) {}
             Button("Continue") {
-                path.append(RadarRoute.saveLocation(deviceID: deviceID, deviceName: device?.displayName ?? "Unknown device"))
+                path.append(RadarRoute.saveLocation(deviceID: deviceID, deviceName: device?.displayName ?? String(localized: "Unknown device")))
             }
         } message: {
             Text("Do you want to save the location of where you found your device? (This makes it easier for you to find your devices next time)")

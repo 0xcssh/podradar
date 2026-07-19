@@ -8,11 +8,15 @@ import SwiftUI
 struct CantSeeDeviceView: View {
     @Environment(\.dismiss) private var dismiss
 
+    // SwiftUI only auto-localizes Text(_:) given a STRING LITERAL directly;
+    // a String variable (like these array elements) takes the verbatim
+    // overload instead. String(localized:) does the catalog lookup
+    // explicitly — see RepLock/Loopa's documented convention.
     private let tips: [(icon: String, text: String)] = [
-        ("case.fill", "If you are looking for AirPods, make sure the AirPods are not in a case"),
-        ("power", "The Bluetooth device must be turned on in order to be detected"),
-        ("battery.25", "The device must still have some battery left"),
-        ("antenna.radiowaves.left.and.right", "Make sure the device is within Bluetooth signal range")
+        ("case.fill", String(localized: "If you are looking for AirPods, make sure the AirPods are not in a case")),
+        ("power", String(localized: "The Bluetooth device must be turned on in order to be detected")),
+        ("battery.25", String(localized: "The device must still have some battery left")),
+        ("antenna.radiowaves.left.and.right", String(localized: "Make sure the device is within Bluetooth signal range"))
     ]
 
     var body: some View {

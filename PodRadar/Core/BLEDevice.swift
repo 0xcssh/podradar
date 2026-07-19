@@ -55,7 +55,7 @@ struct BLEDevice: Identifiable, Equatable, Codable {
     var displayName: String {
         if let customName, !customName.isEmpty { return customName }
         if !name.isEmpty { return name }
-        return "Device \(Self.shortLabel(fromID: id))"
+        return String(localized: "Device \(Self.shortLabel(fromID: id))")
     }
 
     private static func shortLabel(fromID id: String) -> String {

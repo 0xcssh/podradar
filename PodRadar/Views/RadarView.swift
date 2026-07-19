@@ -188,7 +188,10 @@ struct RadarView: View {
     /// nil when Bluetooth is usable (poweredOn) or we don't know yet
     /// (`.unknown`/`.resetting` — CBCentralManager settles quickly after
     /// launch, no need to alarm the user over that transient state).
-    private var bluetoothProblemMessage: String? {
+    /// LocalizedStringKey (not String) so Text(message) below
+    /// auto-localizes — a String return type would take Text's verbatim
+    /// overload instead, even for literal-looking cases.
+    private var bluetoothProblemMessage: LocalizedStringKey? {
         switch scanner.bluetoothState {
         case .poweredOff: return "Turn on Bluetooth to start scanning for devices."
         case .unauthorized: return "PodRadar needs Bluetooth access. Enable it in Settings."
@@ -198,7 +201,7 @@ struct RadarView: View {
         }
     }
 
-    private func bluetoothProblemState(_ message: String) -> some View {
+    private func bluetoothProblemState(_ message: LocalizedStringKey) -> some View {
         VStack(spacing: 16) {
             Image(systemName: "bolt.slash")
                 .font(.system(size: 48))

@@ -1,10 +1,688 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "PodRadar" : {
-      "extractionState" : "manual",
+    "%@ / week" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar" } }
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%@ / Woche" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ / week" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "%@ / semana" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%@ / semaine" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%@ / settimana" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "%@ / semana" } }
+      }
+    },
+    "%@ Device" : {
+      "comment" : "Brand fallback name, e.g. 'Samsung Device' — %@ is the brand name.",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%@-Gerät" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ Device" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo %@" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appareil %@" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo %@" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo %@" } }
+      }
+    },
+    "%lld Days Free Trial, %@ / week" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%lld Tage kostenlos testen, %@ / Woche" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld Days Free Trial, %@ / week" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "%lld días de prueba gratis, %@ / semana" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%lld jours d'essai gratuit, %@ / semaine" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "%lld giorni di prova gratuita, %@ / settimana" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "%lld dias de teste grátis, %@ / semana" } }
+      }
+    },
+    "3 Days Free Trial" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "3 Tage kostenlos testen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "3 Days Free Trial" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "3 días de prueba gratis" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "3 jours d'essai gratuit" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "3 giorni di prova gratuita" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "3 dias de teste grátis" } }
+      }
+    },
+    "Act quickly before device battery diminishes" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Handle schnell, bevor der Akku des Geräts leer wird" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Act quickly before device battery diminishes" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Actúa rápido antes de que se agote la batería del dispositivo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Agis vite avant que la batterie de l'appareil ne s'épuise" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Agisci in fretta prima che la batteria del dispositivo si esaurisca" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Aja rápido antes que a bateria do dispositivo acabe" } }
+      }
+    },
+    "Already Subscribed?" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bereits abonniert?" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Already Subscribed?" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¿Ya tienes suscripción?" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Déjà abonné ?" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Hai già un abbonamento?" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Já é assinante?" } }
+      }
+    },
+    "BLUETOOTH DEVICE FINDER" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "BLUETOOTH-GERÄTESUCHE" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "BLUETOOTH DEVICE FINDER" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "BUSCADOR BLUETOOTH" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "LOCALISATEUR BLUETOOTH" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "RICERCA DISPOSITIVI BLUETOOTH" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "LOCALIZADOR BLUETOOTH" } }
+      }
+    },
+    "Can't see your device?" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gerät nicht dabei?" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Can't see your device?" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¿No ves tu dispositivo?" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Tu ne vois pas ton appareil ?" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Non vedi il tuo dispositivo?" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Não vê seu dispositivo?" } }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Abbrechen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Cancelar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Annuler" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Annulla" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Cancelar" } }
+      }
+    },
+    "Continue" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Weiter" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Continue" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Continuar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Continuer" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Continua" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Continuar" } }
+      }
+    },
+    "Couldn't load pricing — Tap to Retry" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Preis konnte nicht geladen werden — Erneut versuchen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Couldn't load pricing — Tap to Retry" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "No se pudo cargar el precio — Toca para reintentar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Impossible de charger le prix — Appuie pour réessayer" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Impossibile caricare il prezzo — Tocca per riprovare" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Não foi possível carregar o preço — Toque para tentar novamente" } }
+      }
+    },
+    "Device %@" : {
+      "comment" : "Fallback label from the device's own Bluetooth identifier, e.g. 'Device A1B2C3', when no name or brand is known.",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gerät %@" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Device %@" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo %@" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appareil %@" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo %@" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo %@" } }
+      }
+    },
+    "Device Name" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gerätename" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Device Name" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Nombre del dispositivo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom de l'appareil" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nome del dispositivo" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Nome do dispositivo" } }
+      }
+    },
+    "Device name" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gerätename" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Device name" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Nombre del dispositivo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nom de l'appareil" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Nome del dispositivo" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Nome do dispositivo" } }
+      }
+    },
+    "Devices" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Geräte" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Devices" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appareils" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivi" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivos" } }
+      }
+    },
+    "Do you want to save the location of where you found your device? (This makes it easier for you to find your devices next time)" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Möchtest du den Ort speichern, an dem du dein Gerät gefunden hast? (Das erleichtert dir das Wiederfinden deiner Geräte)" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Do you want to save the location of where you found your device? (This makes it easier for you to find your devices next time)" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¿Quieres guardar la ubicación donde encontraste tu dispositivo? (Esto te facilitará encontrar tus dispositivos la próxima vez)" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Veux-tu enregistrer l'endroit où tu as trouvé ton appareil ? (Cela te facilitera la recherche la prochaine fois)" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Vuoi salvare la posizione in cui hai trovato il tuo dispositivo? (Questo ti aiuterà a ritrovarlo più facilmente la prossima volta)" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Deseja salvar o local onde encontrou seu dispositivo? (Isso facilita encontrar seus dispositivos da próxima vez)" } }
+      }
+    },
+    "Free" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kostenlos" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Free" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Gratis" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Gratuit" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Gratis" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Grátis" } }
+      }
+    },
+    "Ignored Devices" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Ignorierte Geräte" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Ignored Devices" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivos ignorados" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appareils ignorés" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivi ignorati" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivos ignorados" } }
+      }
+    },
+    "Enable Location" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Standort aktivieren" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Enable Location" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Activar ubicación" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Activer la localisation" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Attiva posizione" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ativar localização" } }
+      }
+    },
+    "Enter a description of the location below" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gib unten eine Beschreibung des Orts ein" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Enter a description of the location below" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Escribe una descripción del lugar a continuación" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ajoute une description de l'endroit ci-dessous" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Inserisci qui sotto una descrizione del luogo" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Insira uma descrição do local abaixo" } }
+      }
+    },
+    "FAR" : {
+      "comment" : "Short badge label — keep very short in translation to fit the pill.",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "LOIN" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "FAR" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "LEJOS" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "LOIN" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "LONTANO" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "LONGE" } }
+      }
+    },
+    "Favorite" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Favorit" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Favorite" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Favorito" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Favori" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Preferito" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Favorito" } }
+      }
+    },
+    "Found it!" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gefunden!" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Found it!" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "¡Encontrado!" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Trouvé !" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Trovato!" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Encontrei!" } }
+      }
+    },
+    "If you are looking for AirPods, make sure the AirPods are not in a case" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Wenn du AirPods suchst, stelle sicher, dass sie sich nicht im Etui befinden" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "If you are looking for AirPods, make sure the AirPods are not in a case" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Si buscas tus AirPods, asegúrate de que no estén dentro del estuche" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Si tu cherches des AirPods, vérifie qu'ils ne sont pas dans leur boîtier" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Se stai cercando degli AirPods, assicurati che non siano nella custodia" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Se você está procurando AirPods, verifique se eles não estão no estojo" } }
+      }
+    },
+    "Ignore" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Ignorieren" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Ignore" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ignorar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ignorer" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ignora" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ignorar" } }
+      }
+    },
+    "Last Seen" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Zuletzt gesehen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Last Seen" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Visto por última vez" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Dernière position" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ultima posizione" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Última localização" } }
+      }
+    },
+    "Location access is off, so PodRadar can't remember where a device was last detected." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Der Standortzugriff ist deaktiviert, daher kann sich PodRadar nicht merken, wo ein Gerät zuletzt erkannt wurde." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Location access is off, so PodRadar can't remember where a device was last detected." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "El acceso a la ubicación está desactivado, así que PodRadar no puede recordar dónde se detectó un dispositivo por última vez." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "L'accès à la localisation est désactivé, donc PodRadar ne peut pas mémoriser où un appareil a été détecté pour la dernière fois." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "L'accesso alla posizione è disattivato, quindi PodRadar non può ricordare dove è stato rilevato per l'ultima volta un dispositivo." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O acesso à localização está desativado, então o PodRadar não consegue lembrar onde um dispositivo foi detectado pela última vez." } }
+      }
+    },
+    "Make sure the device is within Bluetooth signal range" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Stelle sicher, dass sich das Gerät in Bluetooth-Reichweite befindet" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Make sure the device is within Bluetooth signal range" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Asegúrate de que el dispositivo esté dentro del alcance de la señal Bluetooth" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vérifie que l'appareil est à portée du signal Bluetooth" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Assicurati che il dispositivo sia entro il raggio del segnale Bluetooth" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Verifique se o dispositivo está dentro do alcance do sinal Bluetooth" } }
+      }
+    },
+    "Make sure your headphones are powered on and nearby." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Stelle sicher, dass dein Kopfhörer eingeschaltet und in der Nähe ist." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Make sure your headphones are powered on and nearby." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Asegúrate de que tus auriculares estén encendidos y cerca." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Vérifie que ton casque est allumé et à proximité." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Assicurati che le tue cuffie siano accese e nelle vicinanze." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Verifique se seu fone está ligado e por perto." } }
+      }
+    },
+    "Map" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Karte" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Map" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Mapa" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Carte" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Mappa" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Mapa" } }
+      }
+    },
+    "Map Location" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Kartenposition" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Map Location" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ubicación en el mapa" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Position sur la carte" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Posizione sulla mappa" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Localização no mapa" } }
+      }
+    },
+    "Move around and follow the signal strength to find your device" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bewege dich und folge der Signalstärke, um dein Gerät zu finden" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Move around and follow the signal strength to find your device" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Muévete y sigue la intensidad de la señal para encontrar tu dispositivo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Déplace-toi et suis la force du signal pour retrouver ton appareil" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Spostati e segui l'intensità del segnale per trovare il tuo dispositivo" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Mova-se e siga a intensidade do sinal para encontrar seu dispositivo" } }
+      }
+    },
+    "NEAR" : {
+      "comment" : "Short badge label — keep very short in translation to fit the pill.",
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "NAH" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "NEAR" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "CERCA" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "PROCHE" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "VICINO" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "PERTO" } }
+      }
+    },
+    "No locations yet" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Noch keine Standorte" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No locations yet" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Aún no hay ubicaciones" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune position pour l'instant" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ancora nessuna posizione" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ainda sem localizações" } }
+      }
+    },
+    "No previous locations yet" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Noch keine früheren Standorte" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No previous locations yet" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Aún no hay ubicaciones anteriores" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Aucune position enregistrée pour l'instant" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ancora nessuna posizione precedente" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ainda sem localizações anteriores" } }
+      }
+    },
+    "Open Settings" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einstellungen öffnen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open Settings" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Abrir ajustes" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ouvrir les réglages" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Apri impostazioni" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Abrir ajustes" } }
+      }
+    },
+    "Pinpoint Your Device's\nExact Location" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Finde den genauen\nStandort deines Geräts" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pinpoint Your Device's\nExact Location" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Localiza la ubicación\nexacta de tu dispositivo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Localise précisément\nton appareil" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Individua la posizione\nesatta del tuo dispositivo" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Localize a posição\nexata do seu dispositivo" } }
+      }
+    },
+    "PodRadar can remember where a device was last detected." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar kann sich merken, wo ein Gerät zuletzt erkannt wurde." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar can remember where a device was last detected." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar puede recordar dónde se detectó un dispositivo por última vez." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar peut mémoriser l'endroit où un appareil a été détecté pour la dernière fois." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar può ricordare dove è stato rilevato per l'ultima volta un dispositivo." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O PodRadar pode lembrar onde um dispositivo foi detectado pela última vez." } }
+      }
+    },
+    "PodRadar Pro" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar Pro" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar Pro" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar Pro" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar Pro" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar Pro" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar Pro" } }
+      }
+    },
+    "PodRadar needs Bluetooth access. Enable it in Settings." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar benötigt Bluetooth-Zugriff. Aktiviere ihn in den Einstellungen." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar needs Bluetooth access. Enable it in Settings." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar necesita acceso a Bluetooth. Actívalo en Ajustes." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar a besoin d'accéder au Bluetooth. Active-le dans les réglages." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar necessita dell'accesso al Bluetooth. Attivalo nelle Impostazioni." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O PodRadar precisa de acesso ao Bluetooth. Ative-o nos Ajustes." } }
+      }
+    },
+    "PodRadar remembers where a device was last seen once it goes out of range." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar merkt sich, wo ein Gerät zuletzt gesehen wurde, sobald es außer Reichweite gerät." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar remembers where a device was last seen once it goes out of range." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar recuerda dónde se vio un dispositivo por última vez en cuanto sale de alcance." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar mémorise l'endroit où un appareil a été vu pour la dernière fois dès qu'il sort de portée." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar ricorda dove è stato visto per l'ultima volta un dispositivo non appena esce dal raggio d'azione." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O PodRadar lembra onde um dispositivo foi visto pela última vez assim que ele sai de alcance." } }
+      }
+    },
+    "PodRadar remembers where a device was last seen once you tap \"Found it!\" or it goes out of range." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar merkt sich, wo ein Gerät zuletzt gesehen wurde, sobald du auf „Gefunden!“ tippst oder es außer Reichweite gerät." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar remembers where a device was last seen once you tap \"Found it!\" or it goes out of range." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar recuerda dónde se vio un dispositivo por última vez en cuanto tocas «¡Encontrado!» o sale de alcance." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar mémorise l'endroit où un appareil a été vu pour la dernière fois dès que tu appuies sur « Trouvé ! » ou qu'il sort de portée." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar ricorda dove è stato visto per l'ultima volta un dispositivo non appena tocchi \"Trovato!\" o esce dal raggio d'azione." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O PodRadar lembra onde um dispositivo foi visto pela última vez assim que você toca em \"Encontrei!\" ou ele sai de alcance." } }
+      }
+    },
+    "Previous Locations" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Frühere Standorte" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Previous Locations" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ubicaciones anteriores" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Positions précédentes" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Posizioni precedenti" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Localizações anteriores" } }
+      }
+    },
+    "Privacy Policy" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Datenschutzrichtlinie" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Privacy Policy" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Política de privacidad" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Politique de confidentialité" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Informativa sulla privacy" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Política de privacidade" } }
+      }
+    },
+    "Pro" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Pro" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pro" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Pro" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Pro" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Pro" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Pro" } }
+      }
+    },
+    "Radar" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Radar" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Radar" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Radar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Radar" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Radar" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Radar" } }
+      }
+    },
+    "Rename" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Umbenennen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rename" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Renombrar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Renommer" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Rinomina" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Renomear" } }
+      }
+    },
+    "Rename Device" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Gerät umbenennen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rename Device" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Renombrar dispositivo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Renommer l'appareil" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Rinomina dispositivo" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Renomear dispositivo" } }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Speichern" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Guardar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Salva" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Salvar" } }
+      }
+    },
+    "Save Location" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Standort speichern" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save Location" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Guardar ubicación" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Enregistrer la position" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Salva posizione" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Salvar localização" } }
+      }
+    },
+    "Scanning for nearby devices…" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Suche nach Geräten in der Nähe…" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Scanning for nearby devices…" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Buscando dispositivos cercanos…" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Recherche d'appareils à proximité…" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Ricerca di dispositivi nelle vicinanze…" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Procurando dispositivos por perto…" } }
+      }
+    },
+    "Search for AirPods & other Bluetooth devices around you" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Suche nach AirPods und anderen Bluetooth-Geräten in deiner Nähe" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Search for AirPods & other Bluetooth devices around you" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Busca tus AirPods y otros dispositivos Bluetooth cercanos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Recherche tes AirPods et autres appareils Bluetooth à proximité" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Cerca i tuoi AirPods e altri dispositivi Bluetooth nelle vicinanze" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Procure AirPods e outros dispositivos Bluetooth por perto" } }
+      }
+    },
+    "See precise signal strength" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Sieh die genaue Signalstärke" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "See precise signal strength" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Consulta la intensidad exacta de la señal" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Consulte la force exacte du signal" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Visualizza l'intensità precisa del segnale" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Veja a intensidade exata do sinal" } }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Einstellungen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Ajustes" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Réglages" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Impostazioni" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ajustes" } }
+      }
+    },
+    "Subscription" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Abonnement" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Subscription" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Suscripción" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Abonnement" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Abbonamento" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Assinatura" } }
+      }
+    },
+    "Tap on your device to track down its precise location" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Tippe auf dein Gerät, um seinen genauen Standort zu finden" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tap on your device to track down its precise location" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Toca tu dispositivo para localizar su ubicación exacta" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appuie sur ton appareil pour localiser sa position exacte" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Tocca il tuo dispositivo per individuarne la posizione esatta" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Toque no seu dispositivo para localizar sua posição exata" } }
+      }
+    },
+    "Tap to Scan" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Tippen zum Scannen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tap to Scan" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Toca para buscar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appuie pour scanner" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Tocca per scansionare" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Toque para escanear" } }
+      }
+    },
+    "Terms of Service" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nutzungsbedingungen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Terms of Service" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Términos del servicio" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Conditions d'utilisation" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Termini di servizio" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Termos de uso" } }
+      }
+    },
+    "The Bluetooth device must be turned on in order to be detected" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Das Bluetooth-Gerät muss eingeschaltet sein, um erkannt zu werden" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The Bluetooth device must be turned on in order to be detected" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "El dispositivo Bluetooth debe estar encendido para poder detectarlo" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "L'appareil Bluetooth doit être allumé pour être détecté" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Il dispositivo Bluetooth deve essere acceso per poter essere rilevato" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O dispositivo Bluetooth precisa estar ligado para ser detectado" } }
+      }
+    },
+    "The device must still have some battery left" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Das Gerät muss noch etwas Akku übrig haben" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The device must still have some battery left" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "El dispositivo debe tener algo de batería restante" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "L'appareil doit avoir encore un peu de batterie" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Il dispositivo deve avere ancora un po' di batteria" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O dispositivo precisa ter um pouco de bateria restante" } }
+      }
+    },
+    "This device doesn't support Bluetooth Low Energy." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Dieses Gerät unterstützt kein Bluetooth Low Energy." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This device doesn't support Bluetooth Low Energy." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Este dispositivo no admite Bluetooth de baja energía." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Cet appareil ne prend pas en charge le Bluetooth Low Energy." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Questo dispositivo non supporta il Bluetooth Low Energy." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Este dispositivo não é compatível com Bluetooth de baixa energia." } }
+      }
+    },
+    "Turn on Bluetooth to start scanning for devices." : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Aktiviere Bluetooth, um mit der Gerätesuche zu beginnen." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Turn on Bluetooth to start scanning for devices." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Activa el Bluetooth para empezar a buscar dispositivos." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Active le Bluetooth pour commencer à rechercher des appareils." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Attiva il Bluetooth per iniziare a cercare i dispositivi." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Ative o Bluetooth para começar a procurar dispositivos." } }
+      }
+    },
+    "Unfavorite" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Favorit entfernen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unfavorite" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Quitar de favoritos" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Retirer des favoris" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Rimuovi dai preferiti" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Remover dos favoritos" } }
+      }
+    },
+    "Unignore" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nicht mehr ignorieren" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unignore" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Dejar de ignorar" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Ne plus ignorer" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Non ignorare più" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Não ignorar mais" } }
+      }
+    },
+    "Unknown device" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Unbekanntes Gerät" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unknown device" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo desconocido" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appareil inconnu" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo sconosciuto" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo desconhecido" } }
+      }
+    },
+    "Unlock Premium" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Premium freischalten" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock Premium" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Desbloquear Premium" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Débloquer Premium" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Sblocca Premium" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Desbloquear Premium" } }
+      }
+    },
+    "Unlock unlimited scans" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Unbegrenzte Scans freischalten" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock unlimited scans" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Desbloquea escaneos ilimitados" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Débloque les scans illimités" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Sblocca scansioni illimitate" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Desbloqueie buscas ilimitadas" } }
+      }
+    },
+    "e.g. Under the couch cushion" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "z. B. Unter dem Sofakissen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "e.g. Under the couch cushion" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "p. ej. Bajo el cojín del sofá" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "ex. Sous le coussin du canapé" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "es. Sotto il cuscino del divano" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "ex. Embaixo da almofada do sofá" } }
       }
     }
   },

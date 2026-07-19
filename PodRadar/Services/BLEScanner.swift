@@ -217,7 +217,7 @@ extension BLEScanner: CBCentralManagerDelegate {
         // Zero-connection fallback for the "Unknown device" problem — see
         // the MARK above. Never overwrites a real advertised name.
         let name = advertisedName.isEmpty
-            ? ManufacturerBrand.brand(forManufacturerData: manufacturerData).map { "\($0) Device" } ?? ""
+            ? ManufacturerBrand.brand(forManufacturerData: manufacturerData).map { String(localized: "\($0) Device") } ?? ""
             : advertisedName
 
         Task { @MainActor in

@@ -1,0 +1,86 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSBluetoothAlwaysUsageDescription" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PodRadar scannt Bluetooth-Signale in der Nähe, um dir zu helfen, deinen verlorenen Kopfhörer zu finden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PodRadar scans nearby Bluetooth signals to help you locate your lost headphones."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PodRadar escanea las señales Bluetooth cercanas para ayudarte a localizar tus auriculares perdidos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PodRadar scanne les signaux Bluetooth à proximité pour t'aider à retrouver ton casque perdu."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PodRadar scansiona i segnali Bluetooth nelle vicinanze per aiutarti a localizzare le tue cuffie perse."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O PodRadar escaneia sinais Bluetooth próximos para ajudar a localizar seu fone perdido."
+          }
+        }
+      }
+    },
+    "NSLocationWhenInUseUsageDescription" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PodRadar merkt sich, wo dein Kopfhörer zuletzt erkannt wurde, damit du ihn auf einer Karte finden kannst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PodRadar remembers where your headphones were last detected so you can find them on a map."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PodRadar recuerda dónde se detectaron tus auriculares por última vez para que puedas encontrarlos en un mapa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PodRadar mémorise l'endroit où ton casque a été détecté pour la dernière fois pour que tu puisses le retrouver sur une carte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PodRadar ricorda dove sono state rilevate per l'ultima volta le tue cuffie, così puoi trovarle su una mappa."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O PodRadar lembra onde seu fone foi detectado pela última vez para que você possa encontrá-lo em um mapa."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
