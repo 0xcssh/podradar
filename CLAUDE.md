@@ -87,6 +87,26 @@ ITSELF). Needs device validation: does this actually resolve names for
 non-Apple earbuds/trackers in the field, and does connecting to many
 devices at once cause any radio contention with the RSSI scan itself?
 
+**Follow-up round (same day, comparing against the reference app
+directly):**
+1. "Can't see your device?" did nothing when tapped — added
+   `CantSeeDeviceView`, a bottom sheet with the same 4 troubleshooting
+   tips as the reference (AirPods not in case, device powered on,
+   battery left, in signal range).
+2. The Devices list had visibly FEWER entries than the reference app's
+   screenshot, which shows every visible device (including ones badged
+   red "FAR") instead of hiding weak signals. The RSSI floor added
+   2026-07-19 was a filter; reverted to a UI-only badge
+   (`DeviceRegistry.nearBadgeThresholdRSSI`, renamed from
+   `listMinimumRSSI`) — `inRangeDevices` no longer filters by signal
+   strength at all, only staleness + ignored. `DevicesListRow` computes
+   NEAR (teal) vs FAR (red) per-row from the live smoothed RSSI reading.
+3. "La connexion n'a pas l'air fiable" — the name-probe was one-shot: a
+   single failed connect (device momentarily busy, radio contention with
+   our own active scan) permanently gave up on that device for the whole
+   session. Now retries up to 3 times with a 15s cooldown between
+   attempts (`nameProbeAttemptCount`/`nameProbeLastAttempt`).
+
 **Map tab lesson (2026-07-19):** field-reported as "doesn't work at
 launch, only works once I've found a device." Root cause was MapView only
 branching on `.notDetermined` — denying (or "Allow Once", which reverts)

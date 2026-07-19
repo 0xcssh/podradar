@@ -70,27 +70,20 @@ final class DeviceRegistryTests: XCTestCase {
         XCTAssertEqual(inRange.map(\.id), ["first", "second"])
     }
 
-    func testWeakSignalDevicesExcludedFromList() {
-        // Field-reported 2026-07-19: with no RSSI floor, the Devices list
-        // dumped 9-10 entries at once (mostly every faint "Unknown device"
-        // signal in the building) instead of revealing devices
-        // progressively as the user gets close, like the reference app.
+    func testWeakSignalDevicesStillIncludedInList() {
+        // Field-reported 2026-07-19: an earlier version filtered weak
+        // signals out of the list entirely — reverted because the
+        // reference app shows every visible device (badging far ones
+        // instead of hiding them) and has visibly more entries ("on va
+        // réélargir"). Signal strength is a UI badge concern now, not a
+        // filtering concern — see nearBadgeThresholdRSSI.
         var registry = DeviceRegistry()
         let now = Date()
         registry.recordSighting(id: "weak", name: "Weak", rssi: -85, at: now)
         registry.recordSighting(id: "strong", name: "Strong", rssi: -60, at: now)
 
         let inRange = registry.inRangeDevices(asOf: now)
-        XCTAssertEqual(inRange.map(\.id), ["strong"])
-    }
-
-    func testInRangeDevicesMinimumRSSIIsConfigurable() {
-        var registry = DeviceRegistry()
-        let now = Date()
-        registry.recordSighting(id: "weak", name: "Weak", rssi: -85, at: now)
-
-        XCTAssertTrue(registry.inRangeDevices(asOf: now).isEmpty)
-        XCTAssertEqual(registry.inRangeDevices(asOf: now, minimumRSSI: -90).map(\.id), ["weak"])
+        XCTAssertEqual(Set(inRange.map(\.id)), ["weak", "strong"])
     }
 
     func testMarkStaleDevicesReturnsOnlyStaleOnes() {

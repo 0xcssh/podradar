@@ -14,6 +14,7 @@ struct RadarView: View {
     @State private var showPaywall = false
     @State private var renamingDeviceID: String?
     @State private var renameText = ""
+    @State private var showCantSeeDevice = false
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -38,6 +39,9 @@ struct RadarView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }
+        .sheet(isPresented: $showCantSeeDevice) {
+            CantSeeDeviceView()
+        }
         .alert("Rename Device", isPresented: renameAlertBinding) {
             TextField("Device name", text: $renameText)
             Button("Cancel", role: .cancel) {}
@@ -54,9 +58,12 @@ struct RadarView: View {
     }
 
     /// "Devices" screen: matches PodSpot's list (screen recording reviewed
-    /// 2026-07-19) — light background, white cards, a generic "NEAR" pill
-    /// (not a live percentage — that precision is the paid feature, shown
-    /// only once a device is tapped and opens DeviceFinderView).
+    /// 2026-07-19) — light background, white cards, a NEAR/FAR badge (not
+    /// a live percentage — that precision is the paid feature, shown only
+    /// once a device is tapped and opens DeviceFinderView). Shows EVERY
+    /// visible device regardless of signal strength (field-reported
+    /// 2026-07-19: the reference app has visibly more entries because it
+    /// doesn't filter weak signals out, just badges them red).
     private var devicesListScreen: some View {
         ZStack {
             LinearGradient(
@@ -83,7 +90,7 @@ struct RadarView: View {
                             Button {
                                 openDevice(device)
                             } label: {
-                                DevicesListRow(device: device)
+                                DevicesListRow(device: device, reading: scanner.proximityByDeviceID[device.id])
                             }
                             .listRowBackground(Color.clear)
                             .listRowSeparator(.hidden)
@@ -118,14 +125,19 @@ struct RadarView: View {
                     .scrollContentBackground(.hidden)
                     .listStyle(.plain)
 
-                    Text("Can't see your device?")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(PRColor.lightText)
-                        .padding(.vertical, 14)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.black.opacity(0.06), in: Capsule())
-                        .padding(.horizontal, 40)
-                        .padding(.bottom, 20)
+                    Button {
+                        showCantSeeDevice = true
+                    } label: {
+                        Text("Can't see your device?")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(PRColor.lightText)
+                            .padding(.vertical, 14)
+                            .frame(maxWidth: .infinity)
+                            .contentShape(Rectangle())
+                            .background(Color.black.opacity(0.06), in: Capsule())
+                    }
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 20)
                 }
             }
         }
@@ -314,6 +326,19 @@ private struct HeroScanView: View {
 
 private struct DevicesListRow: View {
     let device: BLEDevice
+    let reading: ProximityReading?
+
+    /// NEAR/FAR is a badge, not a filter — every visible device shows up
+    /// (field-reported 2026-07-19), this only colors the pill. Falls back
+    /// to the raw RSSI floor if a smoothed reading isn't available yet
+    /// (e.g. the very first sighting, before ProximityEngine has a
+    /// sample).
+    private var isNear: Bool {
+        if let reading {
+            return reading.smoothedRSSI >= DeviceRegistry.nearBadgeThresholdRSSI
+        }
+        return device.lastRSSI >= DeviceRegistry.nearBadgeThresholdRSSI
+    }
 
     var body: some View {
         HStack(spacing: 14) {
@@ -337,12 +362,12 @@ private struct DevicesListRow: View {
             Image(systemName: "location.fill")
                 .font(.caption)
                 .foregroundStyle(PRColor.devicesBlue)
-            Text("NEAR")
+            Text(isNear ? "NEAR" : "FAR")
                 .font(.caption.weight(.bold))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
-                .background(PRColor.nearBadge, in: Capsule())
+                .background(isNear ? PRColor.nearBadge : PRColor.farBadge, in: Capsule())
         }
         .padding(.vertical, 14)
         .padding(.horizontal, 16)

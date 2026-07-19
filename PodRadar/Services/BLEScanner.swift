@@ -46,22 +46,28 @@ final class BLEScanner: NSObject, ObservableObject {
     // device name lives in the standard Generic Access service (0x1800),
     // Device Name characteristic (0x2A00), which requires briefly
     // CONNECTING to read — no pairing/bonding needed, read-only, then we
-    // disconnect immediately. Only probed once per device, and only for
-    // devices strong enough to matter (same floor as the Devices list),
-    // so this doesn't spam connection attempts at every faint signal in
-    // the building.
+    // disconnect immediately.
     // Referenced from `nonisolated` CBPeripheralDelegate callbacks below —
     // marked `nonisolated` explicitly since static members of a
     // `@MainActor` type are otherwise actor-isolated by default too.
     private nonisolated static let genericAccessServiceUUID = CBUUID(string: "1800")
     private nonisolated static let deviceNameCharacteristicUUID = CBUUID(string: "2A00")
     private static let nameProbeTimeout: TimeInterval = 4
+    /// Field-reported 2026-07-19: a one-shot probe "n'a pas l'air fiable"
+    /// — a single connect attempt failing (device momentarily busy,
+    /// mid-advertisement-cycle, radio contention with our own active
+    /// scan) permanently gave up on that device for the whole session.
+    /// Retrying a few times, spaced out, catches devices that just had a
+    /// bad first attempt.
+    private static let maxNameProbeAttempts = 3
+    private static let nameProbeRetryCooldown: TimeInterval = 15
 
     /// Strong refs required by CoreBluetooth — an unretained CBPeripheral
     /// being connected gets silently dropped.
     private var probingPeripherals: [String: CBPeripheral] = [:]
     private var nameProbeTimeoutTimers: [String: Timer] = [:]
-    private var nameProbeAttempted: Set<String> = []
+    private var nameProbeAttemptCount: [String: Int] = [:]
+    private var nameProbeLastAttempt: [String: Date] = [:]
 
     override init() {
         super.init()
@@ -138,13 +144,19 @@ final class BLEScanner: NSObject, ObservableObject {
 
     private func maybeProbeName(for peripheral: CBPeripheral, rssi: Double, hasName: Bool) {
         let id = peripheral.identifier.uuidString
+        let attempts = nameProbeAttemptCount[id] ?? 0
+        let cooledDown = nameProbeLastAttempt[id].map {
+            Date().timeIntervalSince($0) >= Self.nameProbeRetryCooldown
+        } ?? true
         guard !hasName,
-              rssi >= DeviceRegistry.listMinimumRSSI,
-              !nameProbeAttempted.contains(id),
+              rssi >= DeviceRegistry.nearBadgeThresholdRSSI,
+              attempts < Self.maxNameProbeAttempts,
+              cooledDown,
               probingPeripherals[id] == nil
         else { return }
 
-        nameProbeAttempted.insert(id)
+        nameProbeAttemptCount[id] = attempts + 1
+        nameProbeLastAttempt[id] = Date()
         probingPeripherals[id] = peripheral
         central.connect(peripheral, options: nil)
 

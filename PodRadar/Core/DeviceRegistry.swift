@@ -139,28 +139,28 @@ struct DeviceRegistry: Equatable {
         ignoredDeviceIDs = ids
     }
 
-    /// RSSI floor for a device to appear in the Devices list at all.
-    /// Field-reported 2026-07-19: with no floor, the list dumped 9-10
-    /// devices at once (mostly "Unknown device" — every faint BLE signal
-    /// in the building) instead of revealing devices progressively as the
-    /// user gets close, the way PodSpot's reference recording does.
-    /// -70dBm is roughly "same room" in a typical indoor environment;
-    /// tune from field feedback.
-    static let listMinimumRSSI: Double = -70
+    /// RSSI at/above which a device reads as "NEAR" rather than "FAR" in
+    /// the Devices list badge (see RadarView) — a UI classification, NOT
+    /// a filter. Field-reported 2026-07-19: an earlier version of this
+    /// constant FILTERED weak signals out of the list entirely, but the
+    /// reference app shows every device it can see (just badges far ones
+    /// red instead of hiding them) and has visibly more entries — "on va
+    /// réélargir". Filtering was reverted; this constant now only
+    /// controls badge color/text.
+    static let nearBadgeThresholdRSSI: Double = -70
 
-    /// Devices currently considered in range AND strong enough to be
-    /// worth showing, excluding anything the user ignored. Sorted by
-    /// FIRST-seen order, not live RSSI — field-reported 2026-07-19:
-    /// sorting by live signal strength made rows constantly reshuffle
-    /// ("devices move around in every direction") as RSSI naturally
-    /// fluctuates. A stable order matters more than a "closest first"
-    /// ordering that's really just noise from row to row.
-    func inRangeDevices(asOf now: Date, staleAfter: TimeInterval = 8, minimumRSSI: Double = listMinimumRSSI) -> [BLEDevice] {
+    /// Every device currently considered in range (not stale, not
+    /// ignored) — no signal-strength filtering, see `nearBadgeThresholdRSSI`.
+    /// Sorted by FIRST-seen order, not live RSSI — field-reported
+    /// 2026-07-19: sorting by live signal strength made rows constantly
+    /// reshuffle ("devices move around in every direction") as RSSI
+    /// naturally fluctuates. A stable order matters more than a
+    /// "closest first" ordering that's really just noise from row to row.
+    func inRangeDevices(asOf now: Date, staleAfter: TimeInterval = 8) -> [BLEDevice] {
         devicesByID.values
             .filter {
                 !$0.isStale(asOf: now, staleAfter: staleAfter)
                     && !ignoredDeviceIDs.contains($0.id)
-                    && $0.lastRSSI >= minimumRSSI
             }
             .sorted { $0.firstSeen < $1.firstSeen }
     }

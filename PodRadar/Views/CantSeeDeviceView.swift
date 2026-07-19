@@ -1,0 +1,57 @@
+import SwiftUI
+
+/// "Can't see your device?" troubleshooting sheet — matches PodSpot's
+/// reference exactly (screenshot reviewed 2026-07-19): four tips covering
+/// the real, inherent limits of passive BLE scanning (Find My protocol is
+/// private to Apple, devices must be on/in range/charged). Presented from
+/// the Devices list's bottom button, which previously did nothing.
+struct CantSeeDeviceView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    private let tips: [(icon: String, text: String)] = [
+        ("case.fill", "If you are looking for AirPods, make sure the AirPods are not in a case"),
+        ("power", "The Bluetooth device must be turned on in order to be detected"),
+        ("battery.25", "The device must still have some battery left"),
+        ("antenna.radiowaves.left.and.right", "Make sure the device is within Bluetooth signal range")
+    ]
+
+    var body: some View {
+        VStack(spacing: 28) {
+            Capsule()
+                .fill(Color.black.opacity(0.15))
+                .frame(width: 40, height: 5)
+                .padding(.top, 10)
+
+            Text("Can't see your device?")
+                .font(.title2.bold())
+                .foregroundStyle(PRColor.lightText)
+
+            VStack(alignment: .leading, spacing: 22) {
+                ForEach(tips, id: \.text) { tip in
+                    HStack(alignment: .top, spacing: 16) {
+                        Image(systemName: tip.icon)
+                            .font(.title3)
+                            .foregroundStyle(PRColor.devicesBlue)
+                            .frame(width: 28)
+                        Text(tip.text)
+                            .font(.subheadline)
+                            .foregroundStyle(PRColor.lightText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+            .padding(.horizontal, 28)
+
+            Spacer()
+        }
+        .background(
+            LinearGradient(
+                colors: [PRColor.lightBackgroundTop, PRColor.lightBackgroundBottom],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        )
+        .presentationDetents([.medium])
+    }
+}

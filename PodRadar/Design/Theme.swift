@@ -30,6 +30,10 @@ enum PRColor {
     static let lightTextSecondary = Color(hex: "6B6B70")
     /// "NEAR" status pill on the Devices list.
     static let nearBadge = Color(hex: "1FD1A6")
+    /// "FAR" status pill on the Devices list — field-reported 2026-07-19:
+    /// the reference app shows every visible device, badging far ones
+    /// red instead of hiding them entirely.
+    static let farBadge = Color(hex: "E0483E")
 
     /// Single-device finder screen background: interpolates from this
     /// (far) to `proximityClose` (near) as proximity increases — the
