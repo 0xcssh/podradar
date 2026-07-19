@@ -55,6 +55,13 @@ extension View {
             .foregroundStyle(.black)
             .padding(.vertical, 16)
             .frame(maxWidth: .infinity)
+            // Field-reported 2026-07-19: a button styled this way (frame
+            // widened via modifiers applied to the Button itself, not
+            // inside its label) could render as a full-width pill but only
+            // respond to taps on the tight text glyph bounds — a known
+            // SwiftUI gotcha. contentShape forces hit-testing to the full
+            // visual frame.
+            .contentShape(Rectangle())
             .background(PRColor.signal, in: Capsule())
     }
 }
