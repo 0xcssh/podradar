@@ -73,7 +73,7 @@ struct RadarView: View {
             )
             .ignoresSafeArea()
 
-            if scanner.registry.inRangeDevices(asOf: .now).isEmpty {
+            if sortedDevices.isEmpty {
                 emptyState
             } else {
                 VStack(spacing: 0) {
@@ -86,11 +86,11 @@ struct RadarView: View {
                         .padding(.bottom, 8)
 
                     List {
-                        ForEach(scanner.registry.inRangeDevices(asOf: .now)) { device in
+                        ForEach(sortedDevices) { device in
                             Button {
                                 openDevice(device)
                             } label: {
-                                DevicesListRow(device: device, reading: scanner.proximityByDeviceID[device.id])
+                                DevicesListRow(device: device, isNear: isNear(device))
                             }
                             .listRowBackground(Color.clear)
                             .listRowSeparator(.hidden)
@@ -154,6 +154,27 @@ struct RadarView: View {
                 }
             }
         }
+    }
+
+    /// NEAR devices first, FAR devices after — within each group, stable
+    /// first-seen order (not live RSSI) so rows don't reshuffle every
+    /// tick. Field-requested 2026-07-19: "classe en Near -> Far."
+    private var sortedDevices: [BLEDevice] {
+        scanner.registry.inRangeDevices(asOf: .now).sorted { a, b in
+            let aNear = isNear(a)
+            let bNear = isNear(b)
+            if aNear != bNear { return aNear }
+            return a.firstSeen < b.firstSeen
+        }
+    }
+
+    /// NEAR/FAR is a badge/sort concern, not a filter — every visible
+    /// device shows up (field-reported 2026-07-19), this only colors and
+    /// orders. Falls back to the raw RSSI if a smoothed reading isn't
+    /// available yet (e.g. the very first sighting).
+    private func isNear(_ device: BLEDevice) -> Bool {
+        let rssi = scanner.proximityByDeviceID[device.id]?.smoothedRSSI ?? device.lastRSSI
+        return rssi >= DeviceRegistry.nearBadgeThresholdRSSI
     }
 
     private func openDevice(_ device: BLEDevice) {
@@ -326,19 +347,7 @@ private struct HeroScanView: View {
 
 private struct DevicesListRow: View {
     let device: BLEDevice
-    let reading: ProximityReading?
-
-    /// NEAR/FAR is a badge, not a filter — every visible device shows up
-    /// (field-reported 2026-07-19), this only colors the pill. Falls back
-    /// to the raw RSSI floor if a smoothed reading isn't available yet
-    /// (e.g. the very first sighting, before ProximityEngine has a
-    /// sample).
-    private var isNear: Bool {
-        if let reading {
-            return reading.smoothedRSSI >= DeviceRegistry.nearBadgeThresholdRSSI
-        }
-        return device.lastRSSI >= DeviceRegistry.nearBadgeThresholdRSSI
-    }
+    let isNear: Bool
 
     var body: some View {
         HStack(spacing: 14) {
