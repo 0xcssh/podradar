@@ -74,6 +74,18 @@ struct DeviceRegistry: Equatable {
         devicesByID[id] = device
     }
 
+    /// Sets the advertised name learned by actively reading the device's
+    /// standard Generic Access "Device Name" characteristic (see
+    /// Services/BLEScanner's name-probe flow) — for devices that never
+    /// include a name in their passive BLE advertisement, which is most
+    /// of them (field-confirmed 2026-07-17). Distinct from `rename`
+    /// (`customName`, user-chosen): this is what the DEVICE calls itself.
+    mutating func updateDiscoveredName(id: String, to name: String) {
+        guard !name.isEmpty, var device = devicesByID[id] else { return }
+        device.name = name
+        devicesByID[id] = device
+    }
+
     mutating func toggleFavorite(id: String) {
         guard var device = devicesByID[id] else { return }
         device.isFavorite.toggle()

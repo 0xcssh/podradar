@@ -148,6 +148,20 @@ final class DeviceRegistryTests: XCTestCase {
         XCTAssertTrue(registry.inRangeDevices(asOf: .now).isEmpty)
     }
 
+    func testUpdateDiscoveredNameSetsNameForUnnamedDevice() {
+        var registry = DeviceRegistry()
+        registry.recordSighting(id: "A", name: "", rssi: -50, at: .now)
+        registry.updateDiscoveredName(id: "A", to: "Galaxy Buds2")
+        XCTAssertEqual(registry.allDevices.first?.displayName, "Galaxy Buds2")
+    }
+
+    func testUpdateDiscoveredNameIgnoresEmptyString() {
+        var registry = DeviceRegistry()
+        registry.recordSighting(id: "A", name: "Original", rssi: -50, at: .now)
+        registry.updateDiscoveredName(id: "A", to: "")
+        XCTAssertEqual(registry.allDevices.first?.name, "Original")
+    }
+
     func testRenameSetsDisplayName() {
         var registry = DeviceRegistry()
         registry.recordSighting(id: "A", name: "AirPods Pro", rssi: -50, at: .now)

@@ -70,6 +70,23 @@ RadarView (with an Open Settings button for the unauthorized case) — it
 used to fall through to the same silent "Scanning…" text as the normal
 not-found-yet-state, giving zero signal that anything was actually wrong.
 
+**Name-probe feature (2026-07-19):** field-asked "can we fix Unknown
+device, be more precise?" Most BLE peripherals never include a name in
+their passive advertisement (only Apple's proximity-pairing beacon is
+reliably identifiable that way, confirmed 2026-07-17) — the real name
+lives in the standard Generic Access service (0x1800) / Device Name
+characteristic (0x2A00), which requires briefly CONNECTING to read (no
+pairing/bonding). `BLEScanner` now does this automatically for any
+unnamed device strong enough to matter (same -70dBm floor as the Devices
+list), once per device per session (`nameProbeAttempted`), with a 4s
+timeout and always disconnecting afterward — connect/discoverServices/
+discoverCharacteristics/readValue/disconnect via `CBPeripheralDelegate`.
+Learned names go through `DeviceRegistry.updateDiscoveredName` (separate
+from `rename`'s user-chosen `customName` — this is what the device calls
+ITSELF). Needs device validation: does this actually resolve names for
+non-Apple earbuds/trackers in the field, and does connecting to many
+devices at once cause any radio contention with the RSSI scan itself?
+
 **Map tab lesson (2026-07-19):** field-reported as "doesn't work at
 launch, only works once I've found a device." Root cause was MapView only
 branching on `.notDetermined` — denying (or "Allow Once", which reverts)

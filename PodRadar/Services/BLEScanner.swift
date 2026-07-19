@@ -38,6 +38,31 @@ final class BLEScanner: NSObject, ObservableObject {
     /// automatically the moment the radio is actually ready.
     private var wantsToScan = false
 
+    // MARK: - Name probing
+    // Field-reported 2026-07-19: "can we fix Unknown device, be more
+    // precise?" Most BLE peripherals never include a name in their
+    // passive advertisement (only Apple's proximity-pairing beacon is
+    // reliably identifiable that way — confirmed 2026-07-17). The actual
+    // device name lives in the standard Generic Access service (0x1800),
+    // Device Name characteristic (0x2A00), which requires briefly
+    // CONNECTING to read — no pairing/bonding needed, read-only, then we
+    // disconnect immediately. Only probed once per device, and only for
+    // devices strong enough to matter (same floor as the Devices list),
+    // so this doesn't spam connection attempts at every faint signal in
+    // the building.
+    // Referenced from `nonisolated` CBPeripheralDelegate callbacks below —
+    // marked `nonisolated` explicitly since static members of a
+    // `@MainActor` type are otherwise actor-isolated by default too.
+    private nonisolated static let genericAccessServiceUUID = CBUUID(string: "1800")
+    private nonisolated static let deviceNameCharacteristicUUID = CBUUID(string: "2A00")
+    private static let nameProbeTimeout: TimeInterval = 4
+
+    /// Strong refs required by CoreBluetooth — an unretained CBPeripheral
+    /// being connected gets silently dropped.
+    private var probingPeripherals: [String: CBPeripheral] = [:]
+    private var nameProbeTimeoutTimers: [String: Timer] = [:]
+    private var nameProbeAttempted: Set<String> = []
+
     override init() {
         super.init()
         central = CBCentralManager(delegate: self, queue: nil)
@@ -110,6 +135,32 @@ final class BLEScanner: NSObject, ObservableObject {
             onDeviceWentStale?(device)
         }
     }
+
+    private func maybeProbeName(for peripheral: CBPeripheral, rssi: Double, hasName: Bool) {
+        let id = peripheral.identifier.uuidString
+        guard !hasName,
+              rssi >= DeviceRegistry.listMinimumRSSI,
+              !nameProbeAttempted.contains(id),
+              probingPeripherals[id] == nil
+        else { return }
+
+        nameProbeAttempted.insert(id)
+        probingPeripherals[id] = peripheral
+        central.connect(peripheral, options: nil)
+
+        let timer = Timer.scheduledTimer(withTimeInterval: Self.nameProbeTimeout, repeats: false) { [weak self] _ in
+            Task { @MainActor in self?.finishNameProbe(id: id) }
+        }
+        nameProbeTimeoutTimers[id] = timer
+    }
+
+    private func finishNameProbe(id: String) {
+        nameProbeTimeoutTimers[id]?.invalidate()
+        nameProbeTimeoutTimers.removeValue(forKey: id)
+        if let peripheral = probingPeripherals.removeValue(forKey: id) {
+            central.cancelPeripheralConnection(peripheral)
+        }
+    }
 }
 
 extension BLEScanner: CBCentralManagerDelegate {
@@ -139,12 +190,81 @@ extension BLEScanner: CBCentralManagerDelegate {
         Task { @MainActor in
             self.notifiedStaleIDs.remove(id)
             self.registry.recordSighting(id: id, name: name, kind: kind, rssi: rssi, at: Date())
+            self.maybeProbeName(for: peripheral, rssi: rssi, hasName: !name.isEmpty)
 
             var engine = self.engines[id] ?? ProximityEngine()
             if let reading = engine.ingest(rssi: rssi) {
                 self.proximityByDeviceID[id] = reading
             }
             self.engines[id] = engine
+        }
+    }
+
+    nonisolated func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        Task { @MainActor in
+            peripheral.delegate = self
+            peripheral.discoverServices([Self.genericAccessServiceUUID])
+        }
+    }
+
+    nonisolated func centralManager(
+        _ central: CBCentralManager,
+        didFailToConnect peripheral: CBPeripheral,
+        error: Error?
+    ) {
+        let id = peripheral.identifier.uuidString
+        Task { @MainActor in self.finishNameProbe(id: id) }
+    }
+
+    nonisolated func centralManager(
+        _ central: CBCentralManager,
+        didDisconnectPeripheral peripheral: CBPeripheral,
+        error: Error?
+    ) {
+        let id = peripheral.identifier.uuidString
+        Task { @MainActor in self.finishNameProbe(id: id) }
+    }
+}
+
+extension BLEScanner: CBPeripheralDelegate {
+    nonisolated func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        guard error == nil, let service = peripheral.services?.first(where: { $0.uuid == Self.genericAccessServiceUUID })
+        else {
+            let id = peripheral.identifier.uuidString
+            Task { @MainActor in self.finishNameProbe(id: id) }
+            return
+        }
+        peripheral.discoverCharacteristics([Self.deviceNameCharacteristicUUID], for: service)
+    }
+
+    nonisolated func peripheral(
+        _ peripheral: CBPeripheral,
+        didDiscoverCharacteristicsFor service: CBService,
+        error: Error?
+    ) {
+        guard error == nil,
+              let characteristic = service.characteristics?.first(where: { $0.uuid == Self.deviceNameCharacteristicUUID })
+        else {
+            let id = peripheral.identifier.uuidString
+            Task { @MainActor in self.finishNameProbe(id: id) }
+            return
+        }
+        peripheral.readValue(for: characteristic)
+    }
+
+    nonisolated func peripheral(
+        _ peripheral: CBPeripheral,
+        didUpdateValueFor characteristic: CBCharacteristic,
+        error: Error?
+    ) {
+        let id = peripheral.identifier.uuidString
+        let discoveredName = (error == nil ? characteristic.value.flatMap { String(data: $0, encoding: .utf8) } : nil) ?? ""
+
+        Task { @MainActor in
+            if !discoveredName.isEmpty {
+                self.registry.updateDiscoveredName(id: id, to: discoveredName)
+            }
+            self.finishNameProbe(id: id)
         }
     }
 }
