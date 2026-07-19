@@ -21,7 +21,7 @@ struct RadarView: View {
                 if let message = bluetoothProblemMessage {
                     bluetoothProblemState(message)
                 } else if !hasTappedScan {
-                    HeroScanView(onTapScan: { hasTappedScan = true })
+                    HeroScanView(isSubscribed: subscriptionManager.isSubscribed, onTapScan: { hasTappedScan = true })
                 } else {
                     devicesListScreen
                 }
@@ -215,6 +215,7 @@ struct RadarView: View {
 /// and a shortcut into previously-recorded locations — adapted to
 /// PodRadar's navy/teal identity instead of PodSpot's blue/gold.
 private struct HeroScanView: View {
+    let isSubscribed: Bool
     let onTapScan: () -> Void
     @State private var isPressed = false
 
@@ -243,15 +244,28 @@ private struct HeroScanView: View {
                     .padding(.horizontal, 32)
             }
 
-            NavigationLink {
-                PaywallView()
-            } label: {
-                Label("Unlock Premium", systemImage: "star.fill")
+            if isSubscribed {
+                // Field-reported 2026-07-19: this screen looked identical
+                // before/after subscribing — an already-paying user
+                // shouldn't keep seeing an upsell for the thing they just
+                // bought. Swap the pill for a quiet confirmation badge.
+                Label("PodRadar Pro", systemImage: "checkmark.seal.fill")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.black)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
-                    .background(PRColor.premium, in: Capsule())
+                    .background(PRColor.nearBadge, in: Capsule())
+            } else {
+                NavigationLink {
+                    PaywallView()
+                } label: {
+                    Label("Unlock Premium", systemImage: "star.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.black)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
+                        .background(PRColor.premium, in: Capsule())
+                }
             }
 
             Spacer(minLength: 10)
