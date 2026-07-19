@@ -96,6 +96,16 @@ struct PaywallView: View {
         }
     }
 
+    /// True once loading has finished at least once and still found
+    /// nothing — distinct from "still loading" so the button can offer a
+    /// retry instead of sitting silently disabled forever. New StoreKit
+    /// products can take a few minutes to propagate after creation in
+    /// App Store Connect (field-observed 2026-07-19); this gives the user
+    /// something to act on instead of force-quitting the app.
+    private var productLoadFailed: Bool {
+        !subscriptionManager.isLoadingProducts && weeklyProduct == nil
+    }
+
     private var radarHero: some View {
         ZStack {
             ForEach(0..<3) { ring in
@@ -125,27 +135,39 @@ struct PaywallView: View {
 
     private var continueButton: some View {
         Button {
-            guard let weeklyProduct else { return }
-            isPurchasing = true
-            Task {
-                try? await subscriptionManager.purchase(weeklyProduct)
-                isPurchasing = false
-                if subscriptionManager.isSubscribed { dismiss() }
+            if let weeklyProduct {
+                isPurchasing = true
+                Task {
+                    try? await subscriptionManager.purchase(weeklyProduct)
+                    isPurchasing = false
+                    if subscriptionManager.isSubscribed { dismiss() }
+                }
+            } else {
+                Task { await subscriptionManager.loadProducts() }
             }
         } label: {
-            VStack(spacing: 2) {
-                Text("Continue")
-                    .font(.headline)
-                Text(trialSubtitle)
-                    .font(.caption)
-                    .opacity(0.9)
+            Group {
+                if subscriptionManager.isLoadingProducts || isPurchasing {
+                    ProgressView().tint(.white)
+                } else if productLoadFailed {
+                    Text("Couldn't load pricing — Tap to Retry")
+                        .font(.headline)
+                } else {
+                    VStack(spacing: 2) {
+                        Text("Continue")
+                            .font(.headline)
+                        Text(trialSubtitle)
+                            .font(.caption)
+                            .opacity(0.9)
+                    }
+                }
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(PRColor.nearBadge, in: Capsule())
         }
-        .disabled(weeklyProduct == nil || isPurchasing)
+        .disabled(isPurchasing || subscriptionManager.isLoadingProducts)
     }
 
     private var trialSubtitle: String {
