@@ -155,6 +155,19 @@ final class DeviceRegistryTests: XCTestCase {
         XCTAssertEqual(registry.allDevices.first?.name, "Original")
     }
 
+    func testDisplayNameNeverShowsGenericUnknownPlaceholder() {
+        // Field-reported 2026-07-19 (direct side-by-side with the
+        // reference app): it never shows a bare "Unknown device" label —
+        // every row has SOME distinguishing text, even with zero name or
+        // brand info. Falls back to a short tag derived from the
+        // device's own Bluetooth identifier.
+        var registry = DeviceRegistry()
+        registry.recordSighting(id: "A1B2C3D4-0000-0000-0000-000000000000", name: "", rssi: -50, at: .now)
+        let displayName = registry.allDevices.first!.displayName
+        XCTAssertFalse(displayName.contains("Unknown"))
+        XCTAssertTrue(displayName.hasPrefix("Device "))
+    }
+
     func testRenameSetsDisplayName() {
         var registry = DeviceRegistry()
         registry.recordSighting(id: "A", name: "AirPods Pro", rssi: -50, at: .now)

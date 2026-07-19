@@ -43,10 +43,23 @@ struct BLEDevice: Identifiable, Equatable, Codable {
     }
 
     /// What the UI should show: the user's rename if set, otherwise the
-    /// advertised name, otherwise a generic placeholder.
+    /// advertised/discovered/brand-guessed name, otherwise a short label
+    /// synthesized from the device's own Bluetooth identifier. Field-
+    /// reported 2026-07-19 (direct side-by-side with the reference app):
+    /// it never shows a bare "Unknown device" — every row has SOME
+    /// distinguishing label. Matched by never falling back to a generic
+    /// placeholder string here either; `id` is always available and
+    /// unique, so this is a "Device XXXXXX" tag derived from it — stable
+    /// for the session, at least lets the user tell rows apart even with
+    /// zero name/brand information.
     var displayName: String {
         if let customName, !customName.isEmpty { return customName }
-        return name.isEmpty ? "Unknown device" : name
+        if !name.isEmpty { return name }
+        return "Device \(Self.shortLabel(fromID: id))"
+    }
+
+    private static func shortLabel(fromID id: String) -> String {
+        String(id.filter(\.isHexDigit).prefix(6)).uppercased()
     }
 
     /// Whether this device should still be shown as "in range" given a
