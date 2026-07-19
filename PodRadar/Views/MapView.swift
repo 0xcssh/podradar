@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import UIKit
 
 /// Last-known-position map — PodRadar's differentiator over PodSpot/
 /// Wunderfind/Bickster (see app-marketing-context.md). Shows a pin per
@@ -12,22 +13,36 @@ struct MapView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if locationRecorder.authorizationStatus == .notDetermined {
+                switch locationRecorder.authorizationStatus {
+                case .notDetermined:
                     permissionPrompt
-                } else {
-                    Map(position: $cameraPosition) {
-                        ForEach(devicesWithLocation) { device in
-                            if let location = device.lastKnownLocation {
-                                Marker(
-                                    device.displayName,
-                                    coordinate: CLLocationCoordinate2D(
-                                        latitude: location.latitude,
-                                        longitude: location.longitude
+                case .denied, .restricted:
+                    // Field-reported 2026-07-19: denying (or "Allow Once",
+                    // which reverts) the location prompt used to fall
+                    // through to a blank, unexplained map with no way to
+                    // recover — looked completely broken. iOS won't
+                    // re-prompt once denied, so Settings is the only path.
+                    deniedState
+                case .authorizedWhenInUse, .authorizedAlways:
+                    if devicesWithLocation.isEmpty {
+                        emptyState
+                    } else {
+                        Map(position: $cameraPosition) {
+                            ForEach(devicesWithLocation) { device in
+                                if let location = device.lastKnownLocation {
+                                    Marker(
+                                        device.displayName,
+                                        coordinate: CLLocationCoordinate2D(
+                                            latitude: location.latitude,
+                                            longitude: location.longitude
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }
+                @unknown default:
+                    permissionPrompt
                 }
             }
             .navigationTitle("Last Seen")
@@ -52,6 +67,47 @@ struct MapView: View {
             .prPrimaryPill()
         }
         .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(PRColor.background.ignoresSafeArea())
+    }
+
+    private var deniedState: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "location.slash")
+                .font(.system(size: 48))
+                .foregroundStyle(.white.opacity(0.6))
+            Text("Location access is off, so PodRadar can't remember where a device was last detected.")
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 24)
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            .prPrimaryPill()
+            .padding(.horizontal, 40)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(PRColor.background.ignoresSafeArea())
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "map")
+                .font(.system(size: 40))
+                .foregroundStyle(.white.opacity(0.4))
+            Text("No locations yet")
+                .font(.headline)
+                .foregroundStyle(.white)
+            Text("PodRadar remembers where a device was last seen once you tap \"Found it!\" or it goes out of range.")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.6))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(PRColor.background.ignoresSafeArea())
     }
 }

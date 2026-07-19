@@ -70,6 +70,18 @@ RadarView (with an Open Settings button for the unauthorized case) — it
 used to fall through to the same silent "Scanning…" text as the normal
 not-found-yet-state, giving zero signal that anything was actually wrong.
 
+**Map tab lesson (2026-07-19):** field-reported as "doesn't work at
+launch, only works once I've found a device." Root cause was MapView only
+branching on `.notDetermined` — denying (or "Allow Once", which reverts)
+the location prompt fell through to a plain, pin-less Map with zero
+explanation and no way to recover (iOS never re-prompts once denied,
+Settings is the only path). Also, even once authorized, an empty
+`devicesWithLocation` showed a blank Map instead of an empty state,
+reading as broken. Fixed with an explicit switch over
+`CLAuthorizationStatus` (notDetermined → prompt, denied/restricted →
+Open Settings state, authorized + empty → "No locations yet" empty
+state, authorized + non-empty → the actual Map).
+
 **Curve + latency lesson (2026-07-17, 4th field test):** "75% → 100% with
 huge latency, not progressive." Two compounding causes, both fixed:
 1. `proximityScore` used a path-loss formula that PLATEAUED at -50dBm —
