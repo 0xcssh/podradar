@@ -32,7 +32,7 @@ struct PreviousLocationsView: View {
             } else {
                 List(devicesWithLocation) { device in
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(device.name.isEmpty ? "Unknown device" : device.name)
+                        Text(device.displayName)
                             .font(.headline)
                             .foregroundStyle(.white)
                         if let location = device.lastKnownLocation {

@@ -8,6 +8,7 @@ final class DeviceStore {
     private let defaults: UserDefaults
     private let devicesKey = "com.awdia.podradar.savedDevices"
     private let ignoredKey = "com.awdia.podradar.ignoredDeviceIDs"
+    private let customNamesKey = "com.awdia.podradar.customNames"
 
     init(suiteName: String = "group.com.podradar.app") {
         self.defaults = UserDefaults(suiteName: suiteName) ?? .standard
@@ -29,5 +30,13 @@ final class DeviceStore {
 
     func saveIgnoredDeviceIDs(_ ids: Set<String>) {
         defaults.set(Array(ids), forKey: ignoredKey)
+    }
+
+    func loadCustomNames() -> [String: String] {
+        (defaults.dictionary(forKey: customNamesKey) as? [String: String]) ?? [:]
+    }
+
+    func saveCustomNames(_ names: [String: String]) {
+        defaults.set(names, forKey: customNamesKey)
     }
 }

@@ -40,16 +40,34 @@ final class DeviceRegistryTests: XCTestCase {
         XCTAssertEqual(inRange.map(\.id), ["fresh"])
     }
 
-    func testInRangeDevicesSortedClosestFirst() {
+    func testInRangeDevicesSortedByFirstSeenOrder() {
         var registry = DeviceRegistry()
-        let now = Date()
-        // Both above the default listMinimumRSSI floor (-70) — see
-        // testWeakSignalDevicesExcludedFromList for the floor itself.
-        registry.recordSighting(id: "far", name: "Far", rssi: -68, at: now)
-        registry.recordSighting(id: "near", name: "Near", rssi: -45, at: now)
+        let t0 = Date()
+        registry.recordSighting(id: "first", name: "First", rssi: -60, at: t0)
+        registry.recordSighting(id: "second", name: "Second", rssi: -60, at: t0.addingTimeInterval(1))
 
-        let inRange = registry.inRangeDevices(asOf: now)
-        XCTAssertEqual(inRange.map(\.id), ["near", "far"])
+        let inRange = registry.inRangeDevices(asOf: t0.addingTimeInterval(1))
+        XCTAssertEqual(inRange.map(\.id), ["first", "second"])
+    }
+
+    func testInRangeDevicesOrderStaysFixedAsRSSIFluctuates() {
+        // Field-reported 2026-07-19: sorting by live RSSI made rows
+        // reshuffle constantly as signal strength naturally fluctuated
+        // ("devices move around in every direction"). Order must depend
+        // only on when a device was first discovered, never on later
+        // RSSI updates.
+        var registry = DeviceRegistry()
+        let t0 = Date()
+        registry.recordSighting(id: "first", name: "First", rssi: -65, at: t0)
+        registry.recordSighting(id: "second", name: "Second", rssi: -65, at: t0.addingTimeInterval(1))
+
+        // "second" becomes much stronger than "first" on a later update —
+        // the list order must not change because of it.
+        registry.recordSighting(id: "second", name: "Second", rssi: -45, at: t0.addingTimeInterval(2))
+        registry.recordSighting(id: "first", name: "First", rssi: -69, at: t0.addingTimeInterval(2))
+
+        let inRange = registry.inRangeDevices(asOf: t0.addingTimeInterval(2))
+        XCTAssertEqual(inRange.map(\.id), ["first", "second"])
     }
 
     func testWeakSignalDevicesExcludedFromList() {
@@ -128,6 +146,40 @@ final class DeviceRegistryTests: XCTestCase {
         registry.setIgnoredDeviceIDs(["A", "B"])
 
         XCTAssertTrue(registry.inRangeDevices(asOf: .now).isEmpty)
+    }
+
+    func testRenameSetsDisplayName() {
+        var registry = DeviceRegistry()
+        registry.recordSighting(id: "A", name: "AirPods Pro", rssi: -50, at: .now)
+        registry.rename(id: "A", to: "Kitchen Earbuds")
+        XCTAssertEqual(registry.allDevices.first?.displayName, "Kitchen Earbuds")
+        XCTAssertEqual(registry.customNames, ["A": "Kitchen Earbuds"])
+    }
+
+    func testRenameWithEmptyStringClearsCustomName() {
+        var registry = DeviceRegistry()
+        registry.recordSighting(id: "A", name: "AirPods Pro", rssi: -50, at: .now)
+        registry.rename(id: "A", to: "Kitchen Earbuds")
+        registry.rename(id: "A", to: "")
+        XCTAssertEqual(registry.allDevices.first?.displayName, "AirPods Pro")
+        XCTAssertTrue(registry.customNames.isEmpty)
+    }
+
+    func testRestoreCustomNamesAppliesToExistingDevice() {
+        var registry = DeviceRegistry()
+        registry.recordSighting(id: "A", name: "AirPods Pro", rssi: -50, at: .now)
+        registry.restoreCustomNames(["A": "Kitchen Earbuds"])
+        XCTAssertEqual(registry.allDevices.first?.displayName, "Kitchen Earbuds")
+    }
+
+    func testRestoreCustomNamesAppliesLazilyToDeviceDiscoveredLater() {
+        // The custom name was persisted from a PAST session, but the
+        // device hasn't been rediscovered by BLE yet this launch — the
+        // name must still apply the moment it's first seen.
+        var registry = DeviceRegistry()
+        registry.restoreCustomNames(["A": "Kitchen Earbuds"])
+        registry.recordSighting(id: "A", name: "AirPods Pro", rssi: -50, at: .now)
+        XCTAssertEqual(registry.allDevices.first?.displayName, "Kitchen Earbuds")
     }
 
     func testUpsertUpgradesUnknownKindButNeverDowngrades() {

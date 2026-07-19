@@ -19,6 +19,10 @@ struct PodRadarApp: App {
                     scanner.onIgnoredDeviceIDsChanged = { ids in
                         deviceStore.saveIgnoredDeviceIDs(ids)
                     }
+                    scanner.restoreCustomNames(deviceStore.loadCustomNames())
+                    scanner.onCustomNamesChanged = { names in
+                        deviceStore.saveCustomNames(names)
+                    }
                     scanner.onDeviceWentStale = { device in
                         guard let location = locationRecorder.currentLocationSnapshot() else { return }
                         scanner.attachLastKnownLocation(location, toDeviceID: device.id)

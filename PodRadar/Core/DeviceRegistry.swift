@@ -38,7 +38,14 @@ struct DeviceRegistry: Equatable {
             devicesByID[id] = existing
             return .updated(existing)
         } else {
-            let device = BLEDevice(id: id, name: name, kind: kind, lastRSSI: rssi, lastSeen: date)
+            let device = BLEDevice(
+                id: id,
+                name: name,
+                kind: kind,
+                lastRSSI: rssi,
+                lastSeen: date,
+                customName: pendingCustomNames[id]
+            )
             devicesByID[id] = device
             return .added(device)
         }
@@ -73,6 +80,39 @@ struct DeviceRegistry: Equatable {
         devicesByID[id] = device
     }
 
+    /// Sets (or clears, if `newName` is nil/empty) the user's custom name
+    /// for a device — see `BLEDevice.displayName`.
+    mutating func rename(id: String, to newName: String?) {
+        let trimmed = (newName?.isEmpty == false) ? newName : nil
+        if var device = devicesByID[id] {
+            device.customName = trimmed
+            devicesByID[id] = device
+        }
+        if let trimmed {
+            pendingCustomNames[id] = trimmed
+        } else {
+            pendingCustomNames.removeValue(forKey: id)
+        }
+    }
+
+    /// Restores previously-persisted custom names (called once at launch
+    /// by the owner after loading from DeviceStore). Devices not seen yet
+    /// this session won't exist in `devicesByID` — the name is applied
+    /// lazily in `recordSighting` via `pendingCustomNames` instead.
+    private var pendingCustomNames: [String: String] = [:]
+
+    mutating func restoreCustomNames(_ names: [String: String]) {
+        pendingCustomNames = names
+        for (id, name) in names where devicesByID[id] != nil {
+            devicesByID[id]?.customName = name
+        }
+    }
+
+    /// Current id → custom name mapping, for the owner to persist via
+    /// DeviceStore. Sourced from `pendingCustomNames`, which `rename` keeps
+    /// in sync — always correct even for a device not currently known.
+    var customNames: [String: String] { pendingCustomNames }
+
     mutating func ignore(id: String) {
         ignoredDeviceIDs.insert(id)
     }
@@ -97,8 +137,12 @@ struct DeviceRegistry: Equatable {
     static let listMinimumRSSI: Double = -70
 
     /// Devices currently considered in range AND strong enough to be
-    /// worth showing, sorted closest-first by RSSI, excluding anything
-    /// the user ignored.
+    /// worth showing, excluding anything the user ignored. Sorted by
+    /// FIRST-seen order, not live RSSI — field-reported 2026-07-19:
+    /// sorting by live signal strength made rows constantly reshuffle
+    /// ("devices move around in every direction") as RSSI naturally
+    /// fluctuates. A stable order matters more than a "closest first"
+    /// ordering that's really just noise from row to row.
     func inRangeDevices(asOf now: Date, staleAfter: TimeInterval = 8, minimumRSSI: Double = listMinimumRSSI) -> [BLEDevice] {
         devicesByID.values
             .filter {
@@ -106,7 +150,7 @@ struct DeviceRegistry: Equatable {
                     && !ignoredDeviceIDs.contains($0.id)
                     && $0.lastRSSI >= minimumRSSI
             }
-            .sorted { $0.lastRSSI > $1.lastRSSI }
+            .sorted { $0.firstSeen < $1.firstSeen }
     }
 
     var allDevices: [BLEDevice] {

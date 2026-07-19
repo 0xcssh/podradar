@@ -12,6 +12,8 @@ struct RadarView: View {
     @State private var hasTappedScan = false
     @State private var path = NavigationPath()
     @State private var showPaywall = false
+    @State private var renamingDeviceID: String?
+    @State private var renameText = ""
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -36,6 +38,19 @@ struct RadarView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }
+        .alert("Rename Device", isPresented: renameAlertBinding) {
+            TextField("Device name", text: $renameText)
+            Button("Cancel", role: .cancel) {}
+            Button("Save") {
+                if let id = renamingDeviceID {
+                    scanner.rename(id: id, to: renameText)
+                }
+            }
+        }
+    }
+
+    private var renameAlertBinding: Binding<Bool> {
+        Binding(get: { renamingDeviceID != nil }, set: { if !$0 { renamingDeviceID = nil } })
     }
 
     /// "Devices" screen: matches PodSpot's list (screen recording reviewed
@@ -86,6 +101,15 @@ struct RadarView: View {
                                         device.isFavorite ? "Unfavorite" : "Favorite",
                                         systemImage: device.isFavorite ? "star.slash" : "star"
                                     )
+                                }
+                                .tint(PRColor.devicesBlue)
+                            }
+                            .swipeActions(edge: .leading) {
+                                Button {
+                                    renameText = device.customName ?? ""
+                                    renamingDeviceID = device.id
+                                } label: {
+                                    Label("Rename", systemImage: "pencil")
                                 }
                                 .tint(PRColor.devicesBlue)
                             }
@@ -283,7 +307,7 @@ private struct DevicesListRow: View {
                 .foregroundStyle(PRColor.lightTextSecondary)
                 .frame(width: 28)
 
-            Text(device.name.isEmpty ? "Unknown device" : device.name)
+            Text(device.displayName)
                 .font(.body.weight(.medium))
                 .foregroundStyle(PRColor.lightText)
 

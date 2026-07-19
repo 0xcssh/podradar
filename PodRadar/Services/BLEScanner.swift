@@ -22,6 +22,8 @@ final class BLEScanner: NSObject, ObservableObject {
     /// Fired whenever the ignore list changes, so the owner can persist it
     /// (DeviceStore) — the registry itself has no storage dependency.
     var onIgnoredDeviceIDsChanged: ((Set<String>) -> Void)?
+    /// Fired whenever a device is renamed, so the owner can persist it.
+    var onCustomNamesChanged: (([String: String]) -> Void)?
 
     private var central: CBCentralManager!
     private var engines: [String: ProximityEngine] = [:]
@@ -61,6 +63,15 @@ final class BLEScanner: NSObject, ObservableObject {
 
     func restoreIgnoredDeviceIDs(_ ids: Set<String>) {
         registry.setIgnoredDeviceIDs(ids)
+    }
+
+    func rename(id: String, to newName: String?) {
+        registry.rename(id: id, to: newName)
+        onCustomNamesChanged?(registry.customNames)
+    }
+
+    func restoreCustomNames(_ names: [String: String]) {
+        registry.restoreCustomNames(names)
     }
 
     func startScanning() {

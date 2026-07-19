@@ -8,8 +8,17 @@ struct BLEDevice: Identifiable, Equatable, Codable {
     var kind: DeviceKind
     var lastRSSI: Double
     var lastSeen: Date
+    /// When this device was FIRST seen this session — immutable, never
+    /// touched on subsequent sightings. Used to keep list ordering stable
+    /// (see DeviceRegistry.inRangeDevices): sorting by live RSSI made rows
+    /// constantly reshuffle as signal strength fluctuated, field-reported
+    /// 2026-07-19 as "devices move around in every direction".
+    let firstSeen: Date
     var isFavorite: Bool
     var lastKnownLocation: LastKnownLocation?
+    /// User-assigned name, overrides the BLE-advertised `name` in the UI.
+    /// Persisted locally (DeviceStore) — see `displayName`.
+    var customName: String?
 
     init(
         id: String,
@@ -17,16 +26,27 @@ struct BLEDevice: Identifiable, Equatable, Codable {
         kind: DeviceKind = .unknown,
         lastRSSI: Double,
         lastSeen: Date,
+        firstSeen: Date? = nil,
         isFavorite: Bool = false,
-        lastKnownLocation: LastKnownLocation? = nil
+        lastKnownLocation: LastKnownLocation? = nil,
+        customName: String? = nil
     ) {
         self.id = id
         self.name = name
         self.kind = kind
         self.lastRSSI = lastRSSI
         self.lastSeen = lastSeen
+        self.firstSeen = firstSeen ?? lastSeen
         self.isFavorite = isFavorite
         self.lastKnownLocation = lastKnownLocation
+        self.customName = customName
+    }
+
+    /// What the UI should show: the user's rename if set, otherwise the
+    /// advertised name, otherwise a generic placeholder.
+    var displayName: String {
+        if let customName, !customName.isEmpty { return customName }
+        return name.isEmpty ? "Unknown device" : name
     }
 
     /// Whether this device should still be shown as "in range" given a

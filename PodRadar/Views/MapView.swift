@@ -19,7 +19,7 @@ struct MapView: View {
                         ForEach(devicesWithLocation) { device in
                             if let location = device.lastKnownLocation {
                                 Marker(
-                                    device.name.isEmpty ? "Device" : device.name,
+                                    device.displayName,
                                     coordinate: CLLocationCoordinate2D(
                                         latitude: location.latitude,
                                         longitude: location.longitude
