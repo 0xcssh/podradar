@@ -46,8 +46,15 @@ struct CantSeeDeviceView: View {
             }
             .padding(.horizontal, 28)
             .padding(.bottom, 24)
+
+            Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity)
+        // maxHeight: .infinity (not just maxWidth) so the background below
+        // stretches across the FULL sheet frame, not just the intrinsic
+        // height of the content — otherwise the gradient stops short of
+        // the sheet's actual bounds and the system's black chrome shows
+        // through as bars above/below (field-reported 2026-07-20).
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(
             LinearGradient(
                 colors: [PRColor.lightBackgroundTop, PRColor.lightBackgroundBottom],
