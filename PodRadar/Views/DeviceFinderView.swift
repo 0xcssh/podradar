@@ -78,6 +78,10 @@ struct DeviceFinderView: View {
             mediumFeedback.prepare()
             heavyFeedback.prepare()
             scheduleHaptic()
+            // On-demand, single-target name probe — see BLEScanner's
+            // MARK on name probing for why this replaced automatic
+            // background probing for every unnamed device.
+            scanner.probeNameIfNeeded(for: deviceID)
         }
         .onDisappear {
             hapticTimer?.invalidate()

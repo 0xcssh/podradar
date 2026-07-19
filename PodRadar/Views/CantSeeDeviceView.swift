@@ -41,9 +41,9 @@ struct CantSeeDeviceView: View {
                 }
             }
             .padding(.horizontal, 28)
-
-            Spacer()
+            .padding(.bottom, 24)
         }
+        .frame(maxWidth: .infinity)
         .background(
             LinearGradient(
                 colors: [PRColor.lightBackgroundTop, PRColor.lightBackgroundBottom],
@@ -52,6 +52,10 @@ struct CantSeeDeviceView: View {
             )
             .ignoresSafeArea()
         )
-        .presentationDetents([.medium])
+        // Field-reported 2026-07-19: .medium left a large empty gap below
+        // the 4 tips — the content is a fixed, short height that doesn't
+        // need half the screen. .height sizes the sheet to fit instead.
+        .presentationDetents([.height(430)])
+        .presentationDragIndicator(.hidden)
     }
 }

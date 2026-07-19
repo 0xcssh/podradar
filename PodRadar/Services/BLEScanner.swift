@@ -47,23 +47,36 @@ final class BLEScanner: NSObject, ObservableObject {
     // Device Name characteristic (0x2A00), which requires briefly
     // CONNECTING to read — no pairing/bonding needed, read-only, then we
     // disconnect immediately.
+    //
+    // Second round, same day: running this automatically in the
+    // background for every unnamed device "n'a pas l'air fiable" — most
+    // likely radio contention between the continuous active RSSI scan and
+    // simultaneous connect attempts (a well-documented CoreBluetooth
+    // limitation), plus some peripherals are simply non-connectable
+    // advertisers no probe will ever reach. Researched the alternative:
+    // Core/ManufacturerBrand now gives an instant, zero-connection brand
+    // guess from the SAME advertisement packet the RSSI reading already
+    // comes from — exactly as reliable as proximity itself, no probing
+    // needed. The connect-based probe is demoted from "run automatically
+    // for everything" to "on-demand for the ONE device the user actually
+    // opened" (see `probeNameIfNeeded`, called from DeviceFinderView) —
+    // a single connection has far less radio contention than probing
+    // many devices at once, and it's now a bonus on a screen the user is
+    // already engaged with, not a promise the whole list depends on.
     // Referenced from `nonisolated` CBPeripheralDelegate callbacks below —
     // marked `nonisolated` explicitly since static members of a
     // `@MainActor` type are otherwise actor-isolated by default too.
     private nonisolated static let genericAccessServiceUUID = CBUUID(string: "1800")
     private nonisolated static let deviceNameCharacteristicUUID = CBUUID(string: "2A00")
     private static let nameProbeTimeout: TimeInterval = 4
-    /// Field-reported 2026-07-19: a one-shot probe "n'a pas l'air fiable"
-    /// — a single connect attempt failing (device momentarily busy,
-    /// mid-advertisement-cycle, radio contention with our own active
-    /// scan) permanently gave up on that device for the whole session.
-    /// Retrying a few times, spaced out, catches devices that just had a
-    /// bad first attempt.
     private static let maxNameProbeAttempts = 3
-    private static let nameProbeRetryCooldown: TimeInterval = 15
+    private static let nameProbeRetryCooldown: TimeInterval = 10
 
-    /// Strong refs required by CoreBluetooth — an unretained CBPeripheral
-    /// being connected gets silently dropped.
+    /// Strong refs to every peripheral seen this session — CoreBluetooth
+    /// silently drops an unretained CBPeripheral, and `probeNameIfNeeded`
+    /// needs to connect to one long after the `didDiscover` call that
+    /// first saw it.
+    private var knownPeripherals: [String: CBPeripheral] = [:]
     private var probingPeripherals: [String: CBPeripheral] = [:]
     private var nameProbeTimeoutTimers: [String: Timer] = [:]
     private var nameProbeAttemptCount: [String: Int] = [:]
@@ -142,28 +155,31 @@ final class BLEScanner: NSObject, ObservableObject {
         }
     }
 
-    private func maybeProbeName(for peripheral: CBPeripheral, rssi: Double, hasName: Bool) {
-        let id = peripheral.identifier.uuidString
-        let attempts = nameProbeAttemptCount[id] ?? 0
-        let cooledDown = nameProbeLastAttempt[id].map {
-            Date().timeIntervalSince($0) >= Self.nameProbeRetryCooldown
-        } ?? true
-        guard !hasName,
-              rssi >= DeviceRegistry.nearBadgeThresholdRSSI,
-              attempts < Self.maxNameProbeAttempts,
-              cooledDown,
-              probingPeripherals[id] == nil
+    /// Connects to read the device's real GATT name — call when the user
+    /// opens a specific device (DeviceFinderView.onAppear) that still has
+    /// no name. On-demand and single-target only; see the MARK above for
+    /// why this isn't run automatically for the whole list anymore.
+    func probeNameIfNeeded(for deviceID: String) {
+        guard let device = registry.allDevices.first(where: { $0.id == deviceID }),
+              device.name.isEmpty,
+              let peripheral = knownPeripherals[deviceID]
         else { return }
 
-        nameProbeAttemptCount[id] = attempts + 1
-        nameProbeLastAttempt[id] = Date()
-        probingPeripherals[id] = peripheral
+        let attempts = nameProbeAttemptCount[deviceID] ?? 0
+        let cooledDown = nameProbeLastAttempt[deviceID].map {
+            Date().timeIntervalSince($0) >= Self.nameProbeRetryCooldown
+        } ?? true
+        guard attempts < Self.maxNameProbeAttempts, cooledDown, probingPeripherals[deviceID] == nil else { return }
+
+        nameProbeAttemptCount[deviceID] = attempts + 1
+        nameProbeLastAttempt[deviceID] = Date()
+        probingPeripherals[deviceID] = peripheral
         central.connect(peripheral, options: nil)
 
         let timer = Timer.scheduledTimer(withTimeInterval: Self.nameProbeTimeout, repeats: false) { [weak self] _ in
-            Task { @MainActor in self?.finishNameProbe(id: id) }
+            Task { @MainActor in self?.finishNameProbe(id: deviceID) }
         }
-        nameProbeTimeoutTimers[id] = timer
+        nameProbeTimeoutTimers[deviceID] = timer
     }
 
     private func finishNameProbe(id: String) {
@@ -192,17 +208,22 @@ extension BLEScanner: CBCentralManagerDelegate {
         rssi RSSI: NSNumber
     ) {
         let id = peripheral.identifier.uuidString
-        let name = peripheral.name
+        let advertisedName = peripheral.name
             ?? (advertisementData[CBAdvertisementDataLocalNameKey] as? String)
             ?? ""
         let rssi = RSSI.doubleValue
         let manufacturerData = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data
-        let kind = DeviceKindClassifier.classify(name: name, manufacturerData: manufacturerData)
+        let kind = DeviceKindClassifier.classify(name: advertisedName, manufacturerData: manufacturerData)
+        // Zero-connection fallback for the "Unknown device" problem — see
+        // the MARK above. Never overwrites a real advertised name.
+        let name = advertisedName.isEmpty
+            ? ManufacturerBrand.brand(forManufacturerData: manufacturerData).map { "\($0) Device" } ?? ""
+            : advertisedName
 
         Task { @MainActor in
             self.notifiedStaleIDs.remove(id)
+            self.knownPeripherals[id] = peripheral
             self.registry.recordSighting(id: id, name: name, kind: kind, rssi: rssi, at: Date())
-            self.maybeProbeName(for: peripheral, rssi: rssi, hasName: !name.isEmpty)
 
             var engine = self.engines[id] ?? ProximityEngine()
             if let reading = engine.ingest(rssi: rssi) {

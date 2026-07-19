@@ -101,11 +101,28 @@ directly):**
    `listMinimumRSSI`) — `inRangeDevices` no longer filters by signal
    strength at all, only staleness + ignored. `DevicesListRow` computes
    NEAR (teal) vs FAR (red) per-row from the live smoothed RSSI reading.
-3. "La connexion n'a pas l'air fiable" — the name-probe was one-shot: a
-   single failed connect (device momentarily busy, radio contention with
-   our own active scan) permanently gave up on that device for the whole
-   session. Now retries up to 3 times with a 15s cooldown between
-   attempts (`nameProbeAttemptCount`/`nameProbeLastAttempt`).
+3. "La connexion n'a pas l'air fiable" — asked for real research into an
+   alternative, not just a retry bandaid. Researched: verified real
+   Bluetooth SIG company-ID assignments (via Nordic Semiconductor's
+   bluetooth-numbers-database) and added `Core/ManufacturerBrand` — a
+   zero-connection brand guess ("Samsung Device", "Sony Device", etc.)
+   parsed from the SAME manufacturer-data bytes the RSSI reading already
+   comes from, exactly as reliable as proximity itself. The connect-based
+   GATT probe is demoted from "run automatically for every unnamed
+   device in the background" (likely radio contention between the
+   continuous active scan and simultaneous connects, plus some
+   peripherals are simply non-connectable advertisers) to "on-demand,
+   single-target, triggered only when the user opens that ONE device in
+   DeviceFinderView" (`BLEScanner.probeNameIfNeeded`) — far less radio
+   contention, and it's now a bonus on a screen the user is already
+   engaged with rather than a reliability promise for the whole list.
+   `didDiscover` now stores every seen `CBPeripheral` in
+   `knownPeripherals` so the probe can reconnect long after first sighting.
+
+**"Can't see your device?" sheet layout (2026-07-19):** `.presentationDetents([.medium])`
+left a large empty gap below the 4 short tips. Switched to
+`.presentationDetents([.height(430)])` sized to the actual content,
+dropped the trailing `Spacer()`.
 
 **Map tab lesson (2026-07-19):** field-reported as "doesn't work at
 launch, only works once I've found a device." Root cause was MapView only
