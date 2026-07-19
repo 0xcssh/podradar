@@ -201,7 +201,7 @@ struct PaywallView: View {
                         .font(.headline)
                 } else {
                     VStack(spacing: 2) {
-                        Text("Continue")
+                        Text(continueTitle)
                             .font(.headline)
                         Text(priceSubtitle)
                             .font(.caption)
@@ -215,6 +215,19 @@ struct PaywallView: View {
             .background(PRColor.nearBadge, in: Capsule())
         }
         .disabled(isPurchasing || subscriptionManager.isLoadingProducts)
+    }
+
+    /// Trial variant leads with the offer itself ("Try 3 Days Free")
+    /// rather than a generic "Continue" — field-requested 2026-07-20 so
+    /// the CTA states the deal up front instead of burying it in the
+    /// caption underneath.
+    private var continueTitle: LocalizedStringKey {
+        guard variant == .trial,
+              let intro = product?.subscription?.introductoryOffer,
+              intro.paymentMode == .freeTrial else {
+            return "Continue"
+        }
+        return "Try \(intro.period.value) Days Free"
     }
 
     // String(localized:) with interpolation — see CantSeeDeviceView for
@@ -231,8 +244,7 @@ struct PaywallView: View {
         // never actually fire for that variant.
         if variant == .trial,
            let intro = product.subscription?.introductoryOffer, intro.paymentMode == .freeTrial {
-            let days = intro.period.value
-            return String(localized: "\(days) Days Free Trial, \(price) / week")
+            return String(localized: "then \(price) / week")
         }
         return String(localized: "\(price) / week")
     }

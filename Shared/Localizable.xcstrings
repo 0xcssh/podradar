@@ -22,14 +22,24 @@
         "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo %@" } }
       }
     },
-    "%lld Days Free Trial, %@ / week" : {
+    "Try %lld Days Free" : {
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "%lld Tage kostenlos testen, %@ / Woche" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld Days Free Trial, %@ / week" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "%lld días de prueba gratis, %@ / semana" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "%lld jours d'essai gratuit, %@ / semaine" } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "%lld giorni di prova gratuita, %@ / settimana" } },
-        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "%lld dias de teste grátis, %@ / semana" } }
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "%lld Tage kostenlos testen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Try %lld Days Free" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Prueba %lld días gratis" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Essaie %lld jours gratuits" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Prova %lld giorni gratis" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Experimente %lld dias grátis" } }
+      }
+    },
+    "then %@ / week" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "danach %@ / Woche" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "then %@ / week" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "luego %@ / semana" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "puis %@ / semaine" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "poi %@ / settimana" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "depois %@ / semana" } }
       }
     },
     "3 Days Free Trial" : {
