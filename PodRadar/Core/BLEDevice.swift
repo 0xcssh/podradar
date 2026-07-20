@@ -80,10 +80,13 @@ enum DeviceKind: String, Codable, CaseIterable {
     case unknown
 }
 
-/// GPS snapshot of where a device was found — either stamped
-/// automatically on the in-range→stale transition, or saved explicitly by
-/// the user from the "Found it!" flow (matches PodSpot's Save Location
-/// screen, reviewed 2026-07-19) with an optional description.
+/// GPS snapshot of where a device was found — saved explicitly by the
+/// user from the "Found it!" flow (matches PodSpot's Save Location
+/// screen, reviewed 2026-07-19) with an optional description. Field-
+/// reported 2026-07-20: an earlier version also auto-stamped this on
+/// every in-range→stale transition, which flooded Previous Locations/Map
+/// with a pin for every passing stranger's Bluetooth device — removed,
+/// this is manual-save only now.
 struct LastKnownLocation: Equatable, Codable {
     let latitude: Double
     let longitude: Double

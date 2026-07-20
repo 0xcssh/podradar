@@ -15,10 +15,6 @@ final class BLEScanner: NSObject, ObservableObject {
     @Published private(set) var isScanning = false
     @Published private(set) var bluetoothState: CBManagerState = .unknown
 
-    /// Fired when a device transitions from in-range to stale, so the
-    /// location layer can stamp a last-known-position. Set by the owner
-    /// (e.g. AppState) at startup.
-    var onDeviceWentStale: ((BLEDevice) -> Void)?
     /// Fired whenever the ignore list changes, so the owner can persist it
     /// (DeviceStore) — the registry itself has no storage dependency.
     var onIgnoredDeviceIDsChanged: ((Set<String>) -> Void)?
@@ -27,7 +23,6 @@ final class BLEScanner: NSObject, ObservableObject {
 
     private var central: CBCentralManager!
     private var engines: [String: ProximityEngine] = [:]
-    private var notifiedStaleIDs: Set<String> = []
     private var staleCheckTimer: Timer?
     /// True between `startScanning()` and `stopScanning()`. A fresh
     /// `CBCentralManager` starts in `.unknown` state and only reaches
@@ -147,12 +142,7 @@ final class BLEScanner: NSObject, ObservableObject {
     }
 
     private func pruneStaleDevices() {
-        let now = Date()
-        for device in registry.markStaleDevices(asOf: now) {
-            guard !notifiedStaleIDs.contains(device.id) else { continue }
-            notifiedStaleIDs.insert(device.id)
-            onDeviceWentStale?(device)
-        }
+        _ = registry.markStaleDevices(asOf: Date())
     }
 
     /// Connects to read the device's real GATT name — call when the user
@@ -221,7 +211,6 @@ extension BLEScanner: CBCentralManagerDelegate {
             : advertisedName
 
         Task { @MainActor in
-            self.notifiedStaleIDs.remove(id)
             self.knownPeripherals[id] = peripheral
             self.registry.recordSighting(id: id, name: name, kind: kind, rssi: rssi, at: Date())
 

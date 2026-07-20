@@ -126,7 +126,7 @@ struct MapView: View {
             Text("No locations yet")
                 .font(.headline)
                 .foregroundStyle(.white)
-            Text("PodRadar remembers where a device was last seen once you tap \"Found it!\" or it goes out of range.")
+            Text("Tap \"Found it!\" on a device to save its location here.")
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.6))
                 .multilineTextAlignment(.center)

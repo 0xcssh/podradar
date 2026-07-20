@@ -2,9 +2,11 @@ import SwiftUI
 
 /// Shortcut from the Radar hero screen into last-known-location history —
 /// mirrors PodSpot's "Previous Locations" button (screenshot reviewed
-/// 2026-07-17). Reuses the same data as the Map tab (Core/DeviceRegistry's
-/// `lastKnownLocation`, stamped by LocationRecorder on the in-range→stale
-/// transition — see SPEC.md M3); this is just a list framing of it.
+/// 2026-07-17). Reuses the same data as the Map tab
+/// (Core/DeviceRegistry's `lastKnownLocation`) — only devices explicitly
+/// saved via "Found it!" → Save Location, never auto-recorded (field-
+/// reported 2026-07-20: auto-recording flooded this list with every
+/// nearby stranger's device).
 struct PreviousLocationsView: View {
     @EnvironmentObject private var scanner: BLEScanner
     @EnvironmentObject private var mapFocusCoordinator: MapFocusCoordinator
@@ -23,7 +25,7 @@ struct PreviousLocationsView: View {
                     Text("No previous locations yet")
                         .font(.headline)
                         .foregroundStyle(.white)
-                    Text("PodRadar remembers where a device was last seen once it goes out of range.")
+                    Text("Tap \"Found it!\" on a device to save its location here.")
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.6))
                         .multilineTextAlignment(.center)

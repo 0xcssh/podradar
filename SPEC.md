@@ -97,10 +97,13 @@ start/stop the radio.
       (-70dBm) to stop the list flooding with weak signals, per-device
       rename with local persistence, stable first-seen ordering (no more
       reshuffling as RSSI fluctuates).
-- [x] M3 — last-known-position map ✅: LocationRecorder wired to both
-      BLEScanner.onDeviceWentStale (automatic) AND the "Found it!" → Save
-      Location flow (explicit, with a description field), Map tab +
-      Previous Locations both render it.
+- [x] M3 — last-known-position map ✅: LocationRecorder wired to the
+      "Found it!" → Save Location flow (explicit, with a description
+      field); Map tab + Previous Locations both render it. Originally
+      also auto-stamped a location on every in-range→stale transition —
+      removed 2026-07-20 (field-reported: flooded both screens with a
+      pin for every nearby stranger's device, not just ones the user
+      actually saved).
 - [x] M4 — paywall ✅: real PaywallView matching PodSpot's reference
       exactly, ASC subscription live (`com.awdia.podradar.pro.weekly`,
       2,99 $/wk + 3-day trial, priced in all 175 territories), sandbox

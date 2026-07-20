@@ -535,24 +535,14 @@
         "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O PodRadar precisa de acesso ao Bluetooth. Ative-o nos Ajustes." } }
       }
     },
-    "PodRadar remembers where a device was last seen once it goes out of range." : {
+    "Tap \"Found it!\" on a device to save its location here." : {
       "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar merkt sich, wo ein Gerät zuletzt gesehen wurde, sobald es außer Reichweite gerät." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar remembers where a device was last seen once it goes out of range." } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar recuerda dónde se vio un dispositivo por última vez en cuanto sale de alcance." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar mémorise l'endroit où un appareil a été vu pour la dernière fois dès qu'il sort de portée." } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar ricorda dove è stato visto per l'ultima volta un dispositivo non appena esce dal raggio d'azione." } },
-        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O PodRadar lembra onde um dispositivo foi visto pela última vez assim que ele sai de alcance." } }
-      }
-    },
-    "PodRadar remembers where a device was last seen once you tap \"Found it!\" or it goes out of range." : {
-      "localizations" : {
-        "de" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar merkt sich, wo ein Gerät zuletzt gesehen wurde, sobald du auf „Gefunden!“ tippst oder es außer Reichweite gerät." } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar remembers where a device was last seen once you tap \"Found it!\" or it goes out of range." } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar recuerda dónde se vio un dispositivo por última vez en cuanto tocas «¡Encontrado!» o sale de alcance." } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar mémorise l'endroit où un appareil a été vu pour la dernière fois dès que tu appuies sur « Trouvé ! » ou qu'il sort de portée." } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "PodRadar ricorda dove è stato visto per l'ultima volta un dispositivo non appena tocchi \"Trovato!\" o esce dal raggio d'azione." } },
-        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "O PodRadar lembra onde um dispositivo foi visto pela última vez assim que você toca em \"Encontrei!\" ou ele sai de alcance." } }
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Tippe bei einem Gerät auf „Gefunden!“, um seinen Standort hier zu speichern." } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tap \"Found it!\" on a device to save its location here." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Toca «¡Encontrado!» en un dispositivo para guardar su ubicación aquí." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Appuie sur « Trouvé ! » sur un appareil pour enregistrer sa position ici." } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Tocca \"Trovato!\" su un dispositivo per salvare qui la sua posizione." } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Toque em \"Encontrei!\" em um dispositivo para salvar a localização dele aqui." } }
       }
     },
     "Previous Locations" : {

@@ -48,10 +48,6 @@ struct PodRadarApp: App {
                 scanner.onCustomNamesChanged = { names in
                     deviceStore.saveCustomNames(names)
                 }
-                scanner.onDeviceWentStale = { device in
-                    guard let location = locationRecorder.currentLocationSnapshot() else { return }
-                    scanner.attachLastKnownLocation(location, toDeviceID: device.id)
-                }
                 await subscriptionManager.loadProducts()
                 await subscriptionManager.refreshEntitlements()
             }
