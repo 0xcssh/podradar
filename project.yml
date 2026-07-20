@@ -5,6 +5,11 @@ options:
     iOS: "17.0"
   createIntermediateGroups: true
 
+packages:
+  RevenueCat:
+    url: https://github.com/RevenueCat/purchases-ios
+    from: 5.80.0
+
 settings:
   base:
     SWIFT_VERSION: "5.0"
@@ -24,6 +29,9 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.awdia.podradar
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      - package: RevenueCat
+        product: RevenueCat
     info:
       path: PodRadar/Info.plist
       properties:

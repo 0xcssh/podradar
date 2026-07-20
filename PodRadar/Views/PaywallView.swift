@@ -1,4 +1,3 @@
-import StoreKit
 import SwiftUI
 
 /// Matches PodSpot's real paywall (screen recording reviewed 2026-07-19):
@@ -22,15 +21,11 @@ struct PaywallView: View {
         self.variant = variant
     }
 
-    private var productID: String {
+    private var offer: SubscriptionOffer? {
         switch variant {
-        case .fullPrice: return SubscriptionManager.weeklyFullPriceProductID
-        case .trial: return SubscriptionManager.weeklyProductID
+        case .fullPrice: return subscriptionManager.fullPriceOffer
+        case .trial: return subscriptionManager.trialOffer
         }
-    }
-
-    private var product: Product? {
-        subscriptionManager.products.first { $0.id == productID }
     }
 
     var body: some View {
@@ -119,7 +114,7 @@ struct PaywallView: View {
             .padding(.top, 12)
         }
         .task {
-            if subscriptionManager.products.isEmpty {
+            if subscriptionManager.fullPriceOffer == nil && subscriptionManager.trialOffer == nil {
                 await subscriptionManager.loadProducts()
             }
         }
@@ -127,12 +122,12 @@ struct PaywallView: View {
 
     /// True once loading has finished at least once and still found
     /// nothing — distinct from "still loading" so the button can offer a
-    /// retry instead of sitting silently disabled forever. New StoreKit
-    /// products can take a few minutes to propagate after creation in
-    /// App Store Connect (field-observed 2026-07-19); this gives the user
-    /// something to act on instead of force-quitting the app.
+    /// retry instead of sitting silently disabled forever. New products
+    /// can take a few minutes to propagate after creation in App Store
+    /// Connect/RevenueCat (field-observed 2026-07-19); this gives the
+    /// user something to act on instead of force-quitting the app.
     private var productLoadFailed: Bool {
-        !subscriptionManager.isLoadingProducts && product == nil
+        !subscriptionManager.isLoadingProducts && offer == nil
     }
 
     /// Only shown on the `.trial` variant — the downsell after a 2nd
@@ -190,10 +185,10 @@ struct PaywallView: View {
 
     private var continueButton: some View {
         Button {
-            if let product {
+            if offer != nil {
                 isPurchasing = true
                 Task {
-                    try? await subscriptionManager.purchase(product)
+                    try? await subscriptionManager.purchase(variant: variant)
                     isPurchasing = false
                     if subscriptionManager.isSubscribed { paywallCoordinator.subscribed() }
                 }
@@ -230,12 +225,8 @@ struct PaywallView: View {
     /// the CTA states the deal up front instead of burying it in the
     /// caption underneath.
     private var continueTitle: LocalizedStringKey {
-        guard variant == .trial,
-              let intro = product?.subscription?.introductoryOffer,
-              intro.paymentMode == .freeTrial else {
-            return "Continue"
-        }
-        return "Try \(intro.period.value) Days Free"
+        guard let trialDays = offer?.trialDays else { return "Continue" }
+        return "Try \(trialDays) Days Free"
     }
 
     // String(localized:) with interpolation — see CantSeeDeviceView for
@@ -243,17 +234,12 @@ struct PaywallView: View {
     // does). The interpolated argument types become %lld/%@ placeholders
     // in the catalog key.
     private var priceSubtitle: String {
-        guard let product else {
+        guard let offer else {
             return variant == .trial ? String(localized: "3 Days Free Trial") : String(localized: "Weekly subscription")
         }
-        let price = product.displayPrice
-        // .fullPrice's product has no introductory offer configured in
-        // ASC at all, so this branch is purely defensive — it should
-        // never actually fire for that variant.
-        if variant == .trial,
-           let intro = product.subscription?.introductoryOffer, intro.paymentMode == .freeTrial {
-            return String(localized: "then \(price) / week")
+        if offer.trialDays != nil {
+            return String(localized: "then \(offer.displayPrice) / week")
         }
-        return String(localized: "\(price) / week")
+        return String(localized: "\(offer.displayPrice) / week")
     }
 }
