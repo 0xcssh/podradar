@@ -555,6 +555,36 @@
         "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Localizações anteriores" } }
       }
     },
+    "Report a Bug" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Fehler melden" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Report a Bug" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Reportar un error" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Signaler un bug" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Segnala un bug" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Reportar um bug" } }
+      }
+    },
+    "Support" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Support" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Support" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Soporte" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Assistance" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Supporto" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Suporte" } }
+      }
+    },
+    "Terms of Use" : {
+      "localizations" : {
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Nutzungsbedingungen" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Terms of Use" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Términos de uso" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Conditions d'utilisation" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Termini di utilizzo" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Termos de uso" } }
+      }
+    },
     "Privacy Policy" : {
       "localizations" : {
         "de" : { "stringUnit" : { "state" : "translated", "value" : "Datenschutzrichtlinie" } },

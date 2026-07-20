@@ -30,6 +30,18 @@ struct SettingsView: View {
                         }
                     }
                 }
+
+                Section("Support") {
+                    Link(destination: PodRadarLegal.supportEmailURL) {
+                        Label("Report a Bug", systemImage: "ladybug.fill")
+                    }
+                    Link(destination: PodRadarLegal.privacyURL) {
+                        Label("Privacy Policy", systemImage: "hand.raised.fill")
+                    }
+                    Link(destination: PodRadarLegal.termsURL) {
+                        Label("Terms of Use", systemImage: "doc.text.fill")
+                    }
+                }
             }
             .navigationTitle("Settings")
         }

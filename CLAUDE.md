@@ -366,4 +366,12 @@ BOTH product IDs.
 - [ ] M3 — last-known-position map wired end to end
 - [ ] M4 — onboarding + hard paywall (StoreKit 2 products live in ASC)
 - [ ] M5 — 6-locale localization
-- [ ] M6 — submission prep
+- [ ] M6 — submission prep. Legal pages LIVE 2026-07-20 at
+      https://0xcssh.github.io/podradar-legal/ (repo 0xcssh/podradar-legal,
+      same GitHub Pages pattern as replock-legal) — PaywallView's Terms of
+      Service/Privacy Policy were plain non-tappable Text before
+      (Guideline 3.1.2 requires functional links on any subscription
+      screen); now real `Link`s via `Core/PodRadarLegal.swift`, also added
+      to a new Settings "Support" section (bug report mailto, privacy,
+      terms). Still pending for submission: real app icon (placeholder),
+      App Privacy questionnaire in ASC, flipping the repo private.

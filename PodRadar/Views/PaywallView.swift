@@ -84,8 +84,16 @@ struct PaywallView: View {
                     .padding(.horizontal, 20)
 
                 HStack(spacing: 16) {
-                    Text("Terms of Service")
-                    Text("Privacy Policy")
+                    // Apple requires functional links to both on any
+                    // subscription screen (Guideline 3.1.2) — these were
+                    // plain, non-tappable Text before (field-reported
+                    // 2026-07-20).
+                    Link(destination: PodRadarLegal.termsURL) {
+                        Text("Terms of Service")
+                    }
+                    Link(destination: PodRadarLegal.privacyURL) {
+                        Text("Privacy Policy")
+                    }
                     Button("Already Subscribed?") {
                         Task {
                             await subscriptionManager.refreshEntitlements()
