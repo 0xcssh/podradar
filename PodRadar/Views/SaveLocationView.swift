@@ -32,7 +32,22 @@ struct SaveLocationView: View {
                     Text("Enter a description of the location below")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(PRColor.lightText)
-                    TextField("e.g. Under the couch cushion", text: $description)
+                    TextField(
+                        "",
+                        text: $description,
+                        prompt: Text("e.g. Under the couch cushion")
+                            .foregroundStyle(PRColor.lightTextSecondary)
+                    )
+                        // The app forces .preferredColorScheme(.dark) at the
+                        // window level, so an unstyled TextField defaults to
+                        // dark-mode colors (white text, light placeholder)
+                        // even on this screen's light background — nearly
+                        // invisible (field-reported 2026-07-20). `prompt:`
+                        // styles the placeholder explicitly rather than
+                        // relying on inherited foregroundStyle, which
+                        // doesn't reliably reach the placeholder.
+                        .foregroundStyle(PRColor.lightText)
+                        .tint(PRColor.devicesBlue)
                         .padding(14)
                         .background(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)

@@ -7,6 +7,7 @@ import SwiftUI
 /// transition — see SPEC.md M3); this is just a list framing of it.
 struct PreviousLocationsView: View {
     @EnvironmentObject private var scanner: BLEScanner
+    @EnvironmentObject private var mapFocusCoordinator: MapFocusCoordinator
 
     private var devicesWithLocation: [BLEDevice] {
         scanner.registry.allDevices.filter { $0.lastKnownLocation != nil }
@@ -31,20 +32,30 @@ struct PreviousLocationsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(devicesWithLocation) { device in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(device.displayName)
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                        if let location = device.lastKnownLocation {
-                            Text(location.recordedAt, style: .relative)
-                                .font(.caption)
-                                .foregroundStyle(.white.opacity(0.6))
-                            if let note = location.note, !note.isEmpty {
-                                Text(note)
-                                    .font(.caption)
-                                    .foregroundStyle(PRColor.signal)
+                    Button {
+                        mapFocusCoordinator.focus(onDeviceID: device.id)
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(device.displayName)
+                                    .font(.headline)
+                                    .foregroundStyle(.white)
+                                if let location = device.lastKnownLocation {
+                                    Text(location.recordedAt, style: .relative)
+                                        .font(.caption)
+                                        .foregroundStyle(.white.opacity(0.6))
+                                    if let note = location.note, !note.isEmpty {
+                                        Text(note)
+                                            .font(.caption)
+                                            .foregroundStyle(PRColor.signal)
+                                    }
+                                }
                             }
+                            Spacer()
+                            Image(systemName: "map.fill")
+                                .foregroundStyle(PRColor.signal)
                         }
+                        .contentShape(Rectangle())
                     }
                     .listRowBackground(PRColor.card)
                 }

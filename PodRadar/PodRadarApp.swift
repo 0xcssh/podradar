@@ -6,6 +6,7 @@ struct PodRadarApp: App {
     @StateObject private var locationRecorder = LocationRecorder()
     @StateObject private var subscriptionManager = SubscriptionManager()
     @StateObject private var paywallCoordinator: PaywallCoordinator
+    @StateObject private var mapFocusCoordinator = MapFocusCoordinator()
     @State private var hasCompletedOnboarding: Bool
     private let deviceStore = DeviceStore()
 
@@ -36,6 +37,7 @@ struct PodRadarApp: App {
             .environmentObject(locationRecorder)
             .environmentObject(subscriptionManager)
             .environmentObject(paywallCoordinator)
+            .environmentObject(mapFocusCoordinator)
             .preferredColorScheme(.dark)
             .task {
                 scanner.restoreIgnoredDeviceIDs(deviceStore.loadIgnoredDeviceIDs())

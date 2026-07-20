@@ -217,10 +217,15 @@ struct RadarView: View {
     }
 
     private func bluetoothProblemState(_ message: LocalizedStringKey) -> some View {
-        VStack(spacing: 16) {
-            Image(systemName: "bolt.slash")
-                .font(.system(size: 48))
-                .foregroundStyle(.white.opacity(0.6))
+        VStack(spacing: 20) {
+            ZStack {
+                Circle()
+                    .fill(PRColor.signal.opacity(0.12))
+                    .frame(width: 140, height: 140)
+                Image(systemName: "bolt.slash.fill")
+                    .font(.system(size: 44))
+                    .foregroundStyle(PRColor.signal.opacity(0.8))
+            }
             Text(message)
                 .font(.headline)
                 .foregroundStyle(.white)
@@ -235,10 +240,13 @@ struct RadarView: View {
                     Text("Open Settings").prPrimaryPill()
                 }
                 .padding(.horizontal, 60)
+                .padding(.top, 4)
             }
         }
-        .padding(.top, 80)
-        .frame(maxWidth: .infinity)
+        // maxHeight: .infinity — without it the background only covered
+        // the content's intrinsic height, leaving plain black bars above
+        // and below on real devices (field-reported 2026-07-20).
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(PRColor.background.ignoresSafeArea())
     }
 

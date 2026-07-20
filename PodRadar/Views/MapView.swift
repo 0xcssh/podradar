@@ -8,6 +8,7 @@ import UIKit
 struct MapView: View {
     @EnvironmentObject private var scanner: BLEScanner
     @EnvironmentObject private var locationRecorder: LocationRecorder
+    @EnvironmentObject private var mapFocusCoordinator: MapFocusCoordinator
     @State private var cameraPosition: MapCameraPosition = .automatic
 
     var body: some View {
@@ -47,6 +48,28 @@ struct MapView: View {
             }
             .navigationTitle("Last Seen")
         }
+        .onChange(of: mapFocusCoordinator.deviceID) { _, deviceID in
+            focusIfNeeded(on: deviceID)
+        }
+        .onAppear {
+            focusIfNeeded(on: mapFocusCoordinator.deviceID)
+        }
+    }
+
+    /// Centers the camera on a specific device's pin (requested from
+    /// PreviousLocationsView) then consumes the request so it doesn't
+    /// re-trigger on the next tab switch.
+    private func focusIfNeeded(on deviceID: String?) {
+        guard let deviceID,
+              let device = scanner.registry.allDevices.first(where: { $0.id == deviceID }),
+              let location = device.lastKnownLocation else { return }
+        cameraPosition = .region(
+            MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
+                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+            )
+        )
+        mapFocusCoordinator.deviceID = nil
     }
 
     private var devicesWithLocation: [BLEDevice] {
