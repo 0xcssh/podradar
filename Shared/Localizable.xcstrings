@@ -22,14 +22,14 @@
         "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Dispositivo %@" } }
       }
     },
-    "Try %lld Days Free" : {
+    "Try for Free for %lld Days" : {
       "localizations" : {
         "de" : { "stringUnit" : { "state" : "translated", "value" : "%lld Tage kostenlos testen" } },
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Try %lld Days Free" } },
-        "es" : { "stringUnit" : { "state" : "translated", "value" : "Prueba %lld días gratis" } },
-        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Essaie %lld jours gratuits" } },
-        "it" : { "stringUnit" : { "state" : "translated", "value" : "Prova %lld giorni gratis" } },
-        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Experimente %lld dias grátis" } }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Try for Free for %lld Days" } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Prueba gratis durante %lld días" } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Essaie gratuitement pendant %lld jours" } },
+        "it" : { "stringUnit" : { "state" : "translated", "value" : "Prova gratis per %lld giorni" } },
+        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Experimente grátis por %lld dias" } }
       }
     },
     "then %@ / week" : {

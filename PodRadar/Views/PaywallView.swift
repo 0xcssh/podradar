@@ -220,13 +220,14 @@ struct PaywallView: View {
         .disabled(isPurchasing || subscriptionManager.isLoadingProducts)
     }
 
-    /// Trial variant leads with the offer itself ("Try 3 Days Free")
-    /// rather than a generic "Continue" — field-requested 2026-07-20 so
-    /// the CTA states the deal up front instead of burying it in the
-    /// caption underneath.
+    /// Trial variant leads with the offer itself ("Try for Free for 3
+    /// Days") rather than a generic "Continue" — field-requested
+    /// 2026-07-20 so the CTA states the deal up front instead of burying
+    /// it in the caption underneath. Wording refined 2026-07-23 to read
+    /// more naturally than the terser "Try 3 Days Free".
     private var continueTitle: LocalizedStringKey {
         guard let trialDays = offer?.trialDays else { return "Continue" }
-        return "Try \(trialDays) Days Free"
+        return "Try for Free for \(trialDays) Days"
     }
 
     // String(localized:) with interpolation — see CantSeeDeviceView for
